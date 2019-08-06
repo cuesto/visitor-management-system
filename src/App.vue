@@ -5,7 +5,6 @@
         <span>Vuetify</span>
         <span class="font-weight-light">MATERIAL DESIGN</span>
       </v-toolbar-title>
-      
       <v-spacer></v-spacer>
       <v-btn
         text

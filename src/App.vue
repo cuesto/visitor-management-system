@@ -4,23 +4,19 @@
       <v-list dense>
         <template>
           <v-list-item-group v-model="item" color="primary">
-          <v-list-item
-            v-for="(item, i) in items"
-            :key="i"
-            :to="{ name: item.route}"
-          >
-            <v-list-item-icon>
-              <v-icon v-text="item.icon"></v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title v-text="item.text"></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
+            <v-list-item v-for="(item, i) in items" :key="i" :to="{ name: item.route}">
+              <v-list-item-icon>
+                <v-icon v-text="item.icon"></v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title v-text="item.text"></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
         </template>
       </v-list>
     </v-navigation-drawer>
-    
+
     <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="blue darken-3" dark>
       <v-toolbar-title style="width: 300px" class="ml-0 pl-4">
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
@@ -59,13 +55,13 @@ export default {
     drawer: null,
     item: 0,
     items: [
-      { text: 'Inicio', icon: 'home', route:'home' },
-      { text: 'Visitantes', icon: 'person_add', route:'visitantes' },
-      { text: 'Solicitudes', icon: 'today', route:'solicitudes' },
-      { text: 'Historial', icon: 'history', route:'historial' },
-      { text: 'Empleados', icon: 'people', route:'empleados' },
-      { text: 'Bloqueados', icon: 'lock', route:'bloqueados' },
-    ],
+      { text: "Inicio", icon: "home", route: "home" },
+      { text: "Visitantes", icon: "person_add", route: "visitantes" },
+      { text: "Solicitudes", icon: "today", route: "solicitudes" },
+      { text: "Historial", icon: "history", route: "historial" },
+      { text: "Empleados", icon: "people", route: "empleados" },
+      { text: "Bloqueados", icon: "lock", route: "bloqueados" }
+    ]
   })
 };
 </script>

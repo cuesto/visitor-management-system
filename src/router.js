@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-import Visitante from './components/Visitante'
-import Empleado from './components/Empleado'
+import Visitor from './components/Visitor'
+import Employee from './components/Employee'
 
 Vue.use(Router)
 
@@ -16,14 +16,14 @@ export default new Router({
       component: Home
     },
     {
-      path: '/visitantes',
-      name: 'visitantes',
-      component: Visitante
+      path: '/visitors',
+      name: 'visitors',
+      component: Visitor
     },
     {
-      path: '/empleados',
-      name: 'empleados',
-      component: Empleado
+      path: '/employees',
+      name: 'employees',
+      component: Employee
     }
   ]
 })

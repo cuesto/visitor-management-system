@@ -56,10 +56,10 @@ export default {
     item: 0,
     items: [
       { text: "Inicio", icon: "home", route: "home" },
-      { text: "Visitantes", icon: "person_add", route: "visitantes" },
+      { text: "Visitantes", icon: "person_add", route: "visitors" },
       { text: "Solicitudes", icon: "today", route: "solicitudes" },
       { text: "Historial", icon: "history", route: "historial" },
-      { text: "Empleados", icon: "people", route: "empleados" },
+      { text: "Empleados", icon: "people", route: "employees" },
       { text: "Bloqueados", icon: "lock", route: "bloqueados" }
     ]
   })

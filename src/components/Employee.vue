@@ -22,41 +22,80 @@
               hide-details
             ></v-text-field>
             <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" max-width="500px">
+            <v-dialog v-model="dialog" persistent max-width="600px">
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on">Nuevo Registro</v-btn>
+                <v-btn color="primary" dark v-on="on">
+                  <v-icon left dark>person_add</v-icon>Nuevo Empleado
+                </v-btn>
               </template>
+
               <v-card>
                 <v-card-title>
-                  <span class="headline">{{ formTitle }}</span>
+                  <span class="headline">Empleado</span>
                 </v-card-title>
-
                 <v-card-text>
-                  <v-container grid-list-md>
-                    <v-layout wrap>
-                      <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.employeeId" label="Tarjeta"></v-text-field>
-                      </v-flex>
-                      <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.name" label="Nombre"></v-text-field>
-                      </v-flex>
-                      <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.departmentKey" label="Departamento"></v-text-field>
-                      </v-flex>
-                      <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.taxNumber" label="Cédula"></v-text-field>
-                      </v-flex>
-                       <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.email" label="Correo"></v-text-field>
-                      </v-flex>
-                    </v-layout>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-text-field label="Tarjeta*" required v-model="editedItem.employeeId"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-select
+                          :items="departments"
+                          item-text="description"
+                          item-value="departmentKey"
+                          v-model="editedItem.departmentKey"
+                          label="Departamento*"
+                          required
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-text-field label="Nombre*" required v-model="editedItem.name"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-text-field
+                          label="Correo*"
+                          required
+                          v-model="editedItem.email"
+                          :rules="[ rules.email]"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          label="Telefono"
+                          v-mask="mask"
+                          v-model="editedItem.officePhone"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          label="Extensión"
+                          hint="Extensión de telefono"
+                          v-model="editedItem.officePhoneExt"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          label="Celular"
+                          v-mask="mask"
+                          v-model="editedItem.mobilePhone"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-textarea
+                          label="Comentarios"
+                          v-model="editedItem.comments"
+                          hint="Puede digitar cualquier observación o comentario."
+                        ></v-textarea>
+                      </v-col>
+                    </v-row>
                   </v-container>
+                  <small>*indica campo requerido.</small>
                 </v-card-text>
-
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
-                  <v-btn color="blue darken-1" text @click="save">Guardar</v-btn>
+                  <v-btn color="blue darken-1" text @click="dialog = false">Cerrar</v-btn>
+                  <v-btn color="blue darken-1" text @click="dialog = false">Guardar</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -76,38 +115,34 @@
 
 <script>
 import axios from "axios";
+import { mask } from "vue-the-mask";
 
 export default {
+  directives: {
+    mask
+  },
   data() {
     return {
+      mask: "(###)-###-####",
       employees: [],
+      departments: [],
       dialog: false,
       headers: [
         { text: "Tarjeta", sortable: true, value: "employeeId" },
         { text: "Nombre", sortable: true, value: "name" },
         { text: "Departamento", sortable: true, value: "departmentName" },
-        { text: "Cédula", sortable: true, value: "taxNumber" },
+        { text: "Extensión", sortable: true, value: "officePhoneExt" },
         { text: "Correo", sortable: true, value: "email" },
-
-        // { text: "Descripcion", value: "descripcion", sortable: false },
-        // { text: "Estado", value: "condicion", sortable: false },
+        { text: "Celular", sortable: true, value: "mobilePhone" },
         { text: "Opciones", value: "options", sortable: false }
-
-        //     "employeeKey": 1,
-        // "employeeId": "1",
-        // "departmentKey": 4,
-        // "name": "Albert",
-        // "taxNumber": null,
-        // "officePhone": "1234",
-        // "officePhoneExt": "123",
-        // "email": "albert@company.com",
-        // "mobilePhone": "8094893215",
-        // "comments": "Empleado Seguridad",
-        // "image": null,
-        // "department": null,
-        // "visitors": null,
-        // "employeeRequests": null
       ],
+      rules: {
+          
+          email: value => {
+            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            return pattern.test(value) || 'Correo Inválido.'
+          },
+        },
       search: "",
       editedIndex: -1,
       editedItem: {
@@ -140,6 +175,7 @@ export default {
 
   created() {
     this.getEmployees();
+    this.getDepartments();
   },
   methods: {
     getEmployees() {
@@ -147,8 +183,19 @@ export default {
       axios
         .get("api/Employees/GetEmployees")
         .then(function(response) {
-          console.log(response);
           me.employees = response.data;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    getDepartments() {
+      let me = this;
+      axios
+        .get("api/Departments/GetDepartments")
+        .then(function(response) {
+          console.log(response);
+          me.departments = response.data;
         })
         .catch(function(error) {
           console.log(error);

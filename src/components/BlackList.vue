@@ -31,16 +31,21 @@
 
               <v-card>
                 <v-card-title>
-                  <span class="headline">Bloqueados</span>
+                  <span class="headline">{{ formTitle }}</span>
                 </v-card-title>
                 <v-card-text>
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field label="Nombre*" required v-model="editedItem.name"></v-text-field>
+                        <v-text-field label="Nombre*" required v-model="blackListModel.name"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field label="Cédula*" required v-model="editedItem.taxNumber"></v-text-field>
+                        <v-text-field
+                          label="Cédula*"
+                          required
+                          v-mask="mask"
+                          v-model="blackListModel.taxNumber"
+                        ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
                         <v-menu
@@ -55,7 +60,7 @@
                         >
                           <template v-slot:activator="{ on }">
                             <v-text-field
-                              v-model="editedItem.startDate"
+                              v-model="blackListModel.startDate"
                               label="Fecha Inicio*"
                               prepend-icon="event"
                               readonly
@@ -63,7 +68,7 @@
                             ></v-text-field>
                           </template>
                           <v-date-picker
-                            v-model="editedItem.startDate"
+                            v-model="blackListModel.startDate"
                             @input="menuStartDate = false"
                           ></v-date-picker>
                         </v-menu>
@@ -81,20 +86,23 @@
                         >
                           <template v-slot:activator="{ on }">
                             <v-text-field
-                              v-model="editedItem.endDate"
+                              v-model="blackListModel.endDate"
                               label="Fecha Fin*"
                               prepend-icon="event"
                               readonly
                               v-on="on"
                             ></v-text-field>
                           </template>
-                          <v-date-picker v-model="editedItem.endDate" @input="menuEndDate = false"></v-date-picker>
+                          <v-date-picker
+                            v-model="blackListModel.endDate"
+                            @input="menuEndDate = false"
+                          ></v-date-picker>
                         </v-menu>
                       </v-col>
                       <v-col cols="12">
                         <v-textarea
                           label="Comentarios"
-                          v-model="editedItem.comment"
+                          v-model="blackListModel.comment"
                           hint="Puede digitar cualquier observación o comentario."
                         ></v-textarea>
                       </v-col>
@@ -105,18 +113,24 @@
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click="dialog = false">Cerrar</v-btn>
-                  <v-btn color="blue darken-1" text @click="dialog = false">Guardar</v-btn>
+                  <v-btn color="blue darken-1" text @click="save">Guardar</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
           </v-toolbar>
         </template>
         <template v-slot:item.options="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
-          <v-icon small @click="deleteItem(item)">delete</v-icon>
+          <v-icon
+            size="sm"
+            variant="outline-info"
+            color="blue"
+            class="mr-1"
+            @click="editItem(item)"
+          >edit</v-icon>
+          <v-icon size="sm" color="red" class="mr-1" @click="deleteItem(item)">delete</v-icon>
         </template>
         <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">Resetear</v-btn>
+          <v-btn color="primary" @click="getBlacklists">Resetear</v-btn>
         </template>
       </v-data-table>
     </v-flex>
@@ -133,6 +147,7 @@ export default {
   },
   data() {
     return {
+      mask: "###-#######-#",
       menuStartDate: false,
       menuEndDate: false,
       blacklists: [],
@@ -147,25 +162,19 @@ export default {
       ],
       search: "",
       editedIndex: -1,
-      editedItem: {
+      blackListModel: {
+        blackListKey: 0,
         name: "",
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
-      },
-      defaultItem: {
-        name: "",
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
+        taxNumber: "",
+        startDate: "",
+        endDate: null,
+        comment: ""
       }
     };
   },
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+      return this.editedIndex === -1 ? "Nuevo Registro" : "Actualizar Registro";
     }
   },
 
@@ -179,6 +188,15 @@ export default {
     this.getBlacklists();
   },
   methods: {
+    displayNotification(type, message) {
+      this.$swal.fire({
+        position: "top-end",
+        type: type,
+        title: message,
+        showConfirmButton: false,
+        timer: 3000
+      });
+    },
     getBlacklists() {
       let me = this;
       axios
@@ -192,32 +210,108 @@ export default {
     },
     editItem(item) {
       this.editedIndex = this.blacklists.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      console.log(this.editedItem );
+      this.blackListModel = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      const index = this.desserts.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.desserts.splice(index, 1);
+      this.$swal
+        .fire({
+          title: "¿Está Seguro de Eliminar este registro?",
+          text: "¡No será posible revertir el cambio!",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "¡Si!",
+          cancelButtonText: "Cancelar"
+        })
+        .then(result => {
+          if (result.value) {
+            console.log(item);
+            let me = this;
+            axios
+              .delete("api/BlackLists/DeleteBlackList/" + item.blackListKey)
+              .then(function(response) {
+                console.log(response);
+                if (response.data.result == "ERROR") {
+                  me.displayNotification("error", response.data.message);
+                } else {
+                  me.close();
+                  me.getBlacklists();
+                  me.clean();
+                  me.displayNotification(
+                    "success",
+                    "Se eliminó el registro correctamente."
+                  );
+                }
+              })
+              .catch(function(error) {
+                me.displayNotification("error", error);
+              });
+          }
+        });
     },
 
     close() {
       this.dialog = false;
       setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
+        this.blackListModel = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       }, 300);
     },
 
+    clean() {
+      this.blackListModel.blackListKey = 0;
+      this.blackListModel.name = "";
+      this.blackListModel.taxNumber = "";
+      this.blackListModel.startDate = "";
+      this.blackListModel.endDate = null;
+      this.blackListModel.comment = "";
+    },
+
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+        let me = this;
+        axios
+          .put("api/BlackLists/PutBlackList", me.blackListModel)
+          .then(function(response) {
+            if (response.data.result == "ERROR") {
+              me.displayNotification("error", response.data.message);
+            } else {
+              me.close();
+              me.getBlacklists();
+              me.clean();
+              me.displayNotification(
+                "success",
+                "Se actualizó el registro correctamente."
+              );
+            }
+          })
+          .catch(function(error) {
+            me.displayNotification("error", error);
+          });
       } else {
-        this.desserts.push(this.editedItem);
+        let me = this;
+        axios
+          .post("api/BlackLists/PostBlackList", me.blackListModel)
+          .then(function(response) {
+            if (response.data.result == "ERROR") {
+              me.displayNotification("error", response.data.message);
+            } else {
+              me.close();
+              me.getBlacklists();
+              me.clean();
+              me.displayNotification(
+                "success",
+                "Se creó el registro correctamente."
+              );
+            }
+          })
+          .catch(function(error) {
+            me.displayNotification("error", error);
+          });
       }
-      this.close();
     }
   }
 };

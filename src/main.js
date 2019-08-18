@@ -4,17 +4,16 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
 import axios from 'axios';
-import Snotify from 'vue-snotify';
-import 'vue-snotify/styles/material.css';
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 Vue.config.productionTip = false;
 axios.defaults.baseURL = 'https://localhost:44360/';
-Vue.use(Snotify);
+Vue.use(VueSweetalert2);
 
 new Vue({
   router,
   store,
   vuetify,
-  //Snotify,
   render: h => h(App)
 }).$mount('#app')

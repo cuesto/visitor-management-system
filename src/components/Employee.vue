@@ -31,7 +31,7 @@
 
               <v-card>
                 <v-card-title>
-                  <span class="headline">Empleado</span>
+                  <span class="headline">{{ formTitle }}</span>
                 </v-card-title>
                 <v-card-text>
                   <v-container>
@@ -106,7 +106,7 @@
           <v-icon small @click="deleteItem(item)">delete</v-icon>
         </template>
         <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">Resetear</v-btn>
+          <v-btn color="primary" @click="getEmployees">Resetear</v-btn>
         </template>
       </v-data-table>
     </v-flex>
@@ -137,7 +137,6 @@ export default {
         { text: "Opciones", value: "options", sortable: false }
       ],
       rules: {
-          
           email: value => {
             const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             return pattern.test(value) || 'Correo Inválido.'
@@ -152,18 +151,12 @@ export default {
         carbs: 0,
         protein: 0
       },
-      defaultItem: {
-        name: "",
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
-      }
+      
     };
   },
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New Item" : "Edit Item";
+      return this.editedIndex === -1 ? "Nuevo Empleado" : "Actualizar Empleado";
     }
   },
 

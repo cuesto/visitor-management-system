@@ -43,6 +43,7 @@
         </v-flex>
       </v-layout>
     </v-footer>
+    <vue-snotify></vue-snotify>
   </v-app>
 </template>
 

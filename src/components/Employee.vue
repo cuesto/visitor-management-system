@@ -24,7 +24,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" persistent max-width="600px">
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark v-on="on">
+                <v-btn color="green" dark v-on="on">
                   <v-icon left dark>person_add</v-icon>Nuevo Empleado
                 </v-btn>
               </template>
@@ -37,54 +37,55 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field label="Tarjeta*" required v-model="editedItem.employeeId"></v-text-field>
+                        <v-text-field label="Tarjeta*" required v-model="employeeModel.employeeId"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
                         <v-select
                           :items="departments"
                           item-text="description"
                           item-value="departmentKey"
-                          v-model="editedItem.departmentKey"
+                          v-model="employeeModel.departmentKey"
                           label="Departamento*"
                           required
                         ></v-select>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field label="Nombre*" required v-model="editedItem.name"></v-text-field>
+                        <v-text-field label="Nombre*" required v-model="employeeModel.name"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
                         <v-text-field
                           label="Correo*"
                           required
-                          v-model="editedItem.email"
-                          :rules="[ rules.email]"
+                          v-model="employeeModel.email"
+                          :rules="[rules.email]"
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
                         <v-text-field
                           label="Telefono"
                           v-mask="mask"
-                          v-model="editedItem.officePhone"
+                          v-model="employeeModel.officePhone"
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
                         <v-text-field
                           label="Extensión"
                           hint="Extensión de telefono"
-                          v-model="editedItem.officePhoneExt"
+                          v-mask="maskExt"
+                          v-model="employeeModel.officePhoneExt"
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
                         <v-text-field
                           label="Celular"
                           v-mask="mask"
-                          v-model="editedItem.mobilePhone"
+                          v-model="employeeModel.mobilePhone"
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12">
                         <v-textarea
                           label="Comentarios"
-                          v-model="editedItem.comments"
+                          v-model="employeeModel.comments"
                           hint="Puede digitar cualquier observación o comentario."
                         ></v-textarea>
                       </v-col>
@@ -95,15 +96,21 @@
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click="dialog = false">Cerrar</v-btn>
-                  <v-btn color="blue darken-1" text @click="dialog = false">Guardar</v-btn>
+                  <v-btn color="blue darken-1" text @click="save">Guardar</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
           </v-toolbar>
         </template>
         <template v-slot:item.options="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">edit</v-icon>
-          <v-icon small @click="deleteItem(item)">delete</v-icon>
+          <v-icon
+            size="sm"
+            variant="outline-info"
+            color="blue"
+            class="mr-1"
+            @click="editItem(item)"
+          >edit</v-icon>
+          <v-icon size="sm" color="red" class="mr-1" @click="deleteItem(item)">delete</v-icon>
         </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="getEmployees">Resetear</v-btn>
@@ -124,6 +131,7 @@ export default {
   data() {
     return {
       mask: "(###)-###-####",
+      maskExt: "####",
       employees: [],
       departments: [],
       dialog: false,
@@ -137,21 +145,24 @@ export default {
         { text: "Opciones", value: "options", sortable: false }
       ],
       rules: {
-          email: value => {
-            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            return pattern.test(value) || 'Correo Inválido.'
-          },
-        },
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          return pattern.test(value) || "Correo Inválido.";
+        }
+      },
       search: "",
       editedIndex: -1,
-      editedItem: {
+      employeeModel: {
+        employeeKey: 0,
+        employeeId: "",
         name: "",
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
-      },
-      
+        departmentKey: 0,
+        officePhone: "",
+        officePhoneExt: "",
+        email: "",
+        mobilePhone: "",
+        comments: ""
+      }
     };
   },
   computed: {
@@ -171,6 +182,15 @@ export default {
     this.getDepartments();
   },
   methods: {
+    displayNotification(type, message) {
+      this.$swal.fire({
+        position: "top-end",
+        type: type,
+        title: message,
+        showConfirmButton: false,
+        timer: 3000
+      });
+    },
     getEmployees() {
       let me = this;
       axios
@@ -187,7 +207,6 @@ export default {
       axios
         .get("api/Departments/GetDepartments")
         .then(function(response) {
-          console.log(response);
           me.departments = response.data;
         })
         .catch(function(error) {
@@ -196,31 +215,112 @@ export default {
     },
     editItem(item) {
       this.editedIndex = this.employees.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+      this.employeeModel = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      const index = this.desserts.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.desserts.splice(index, 1);
+     
+      this.$swal
+        .fire({
+          title: "¿Está Seguro de Eliminar este empleado?",
+          text: "¡No será posible revertir el cambio!",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          confirmButtonText: "¡Borrar!",
+          cancelButtonText: "Cancelar"
+        })
+        .then(result => {
+          if (result.value) {
+            let me = this;
+             console.log(item);
+            axios
+              .delete("api/Employees/DeleteEmployee/" + item.employeeKey)
+              .then(function(response) {
+                if (response.data.result == "ERROR") {
+                  me.displayNotification("error", response.data.message);
+                } else {
+                  me.close();
+                  me.getEmployees();
+                  me.clean();
+                  me.displayNotification(
+                    "success",
+                    "Se eliminó el empleado correctamente."
+                  );
+                }
+              })
+              .catch(function(error) {
+                me.displayNotification("error", error);
+              });
+          }
+        });
     },
 
     close() {
       this.dialog = false;
       setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
+        this.employeeModel = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       }, 300);
     },
 
+    clean() {
+      this.employeeModel = {
+        employeeKey: 0,
+        employeeId: "",
+        name: "",
+        departmentKey: 0,
+        officePhone: "",
+        officePhoneExt: "",
+        email: "",
+        mobilePhone: "",
+        comments: ""
+      };
+    },
+
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+        let me = this;
+        axios
+          .put("api/Employees/PutEmployee", me.employeeModel)
+          .then(function(response) {
+            if (response.data.result == "ERROR") {
+              me.displayNotification("error", response.data.message);
+            } else {
+              me.close();
+              me.getEmployees();
+              me.clean();
+              me.displayNotification(
+                "success",
+                "Se actualizó el empleado correctamente."
+              );
+            }
+          })
+          .catch(function(error) {
+            me.displayNotification("error", error);
+          });
       } else {
-        this.desserts.push(this.editedItem);
+        let me = this;
+        axios
+          .post("api/Employees/PostEmployee", me.employeeModel)
+          .then(function(response) {
+            if (response.data.result == "ERROR") {
+              me.displayNotification("error", response.data.message);
+            } else {
+              me.close();
+              me.getEmployees();
+              me.clean();
+              me.displayNotification(
+                "success",
+                "Se creó el registro correctamente."
+              );
+            }
+          })
+          .catch(function(error) {
+            me.displayNotification("error", error);
+          });
       }
-      this.close();
     }
   }
 };

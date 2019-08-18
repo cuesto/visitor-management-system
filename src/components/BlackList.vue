@@ -24,7 +24,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" persistent max-width="600px">
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark v-on="on">
+                <v-btn color="green" dark v-on="on">
                   <v-icon left dark>add</v-icon>Nuevo Registro
                 </v-btn>
               </template>
@@ -167,7 +167,7 @@ export default {
         name: "",
         taxNumber: "",
         startDate: "",
-        endDate: null,
+        endDate: "",
         comment: ""
       }
     };
@@ -221,19 +221,16 @@ export default {
           text: "¡No será posible revertir el cambio!",
           type: "warning",
           showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "¡Si!",
+          confirmButtonColor: "#d33",
+          confirmButtonText: "¡Borrar!",
           cancelButtonText: "Cancelar"
         })
         .then(result => {
           if (result.value) {
-            console.log(item);
             let me = this;
             axios
               .delete("api/BlackLists/DeleteBlackList/" + item.blackListKey)
               .then(function(response) {
-                console.log(response);
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
                 } else {
@@ -262,12 +259,14 @@ export default {
     },
 
     clean() {
-      this.blackListModel.blackListKey = 0;
-      this.blackListModel.name = "";
-      this.blackListModel.taxNumber = "";
-      this.blackListModel.startDate = "";
-      this.blackListModel.endDate = null;
-      this.blackListModel.comment = "";
+      this.blackListModel={
+        blackListKey: 0,
+        name: "",
+        taxNumber: "",
+        startDate: "",
+        endDate: "",
+        comment: ""
+      };
     },
 
     save() {

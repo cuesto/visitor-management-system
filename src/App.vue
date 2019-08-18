@@ -4,7 +4,7 @@
       <v-list dense>
         <template>
           <v-list-item-group v-model="item" color="primary">
-            <v-list-item v-for="(item, i) in items" :key="i" :to="{ name: item.route}">
+            <v-list-item background-color="currentColor" v-for="(item, i) in items" :key="i" :to="{ name: item.route}">
               <v-list-item-icon>
                 <v-icon v-text="item.icon"></v-icon>
               </v-list-item-icon>
@@ -60,7 +60,7 @@ export default {
       { text: "Solicitudes", icon: "today", route: "solicitudes" },
       { text: "Historial", icon: "history", route: "historial" },
       { text: "Empleados", icon: "people", route: "employees" },
-      { text: "Bloqueados", icon: "lock", route: "bloqueados" }
+      { text: "Bloqueados", icon: "lock", route: "blacklists" }
     ]
   })
 };

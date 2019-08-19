@@ -57,8 +57,8 @@ export default {
     items: [
       { text: "Inicio", icon: "home", route: "home" },
       { text: "Visitantes", icon: "person_add", route: "visitors" },
-      { text: "Solicitudes", icon: "today", route: "solicitudes" },
-      { text: "Historial", icon: "history", route: "historial" },
+      { text: "Solicitudes", icon: "today", route: "employeerequests" },
+      // { text: "Historial", icon: "history", route: "histories" },
       { text: "Empleados", icon: "people", route: "employees" },
       { text: "Bloqueados", icon: "block", route: "blacklists" },
       { text: "Usuarios", icon: "security", route: "users" }

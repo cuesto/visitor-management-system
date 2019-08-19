@@ -60,7 +60,8 @@ export default {
       { text: "Solicitudes", icon: "today", route: "solicitudes" },
       { text: "Historial", icon: "history", route: "historial" },
       { text: "Empleados", icon: "people", route: "employees" },
-      { text: "Bloqueados", icon: "lock", route: "blacklists" }
+      { text: "Bloqueados", icon: "block", route: "blacklists" },
+      { text: "Usuarios", icon: "security", route: "users" }
     ]
   })
 };

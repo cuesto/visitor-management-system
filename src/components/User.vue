@@ -59,8 +59,6 @@
                           label="Contraseña*"
                           v-model="userModel.password"
                           :type="'password'"
-                          :rules="[rules.required, rules.min]"
-                          hint="Debe tener al menos 8 caracteres"
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -107,22 +105,17 @@ export default {
   data() {
     return {
       mask: "(###)-###-####",
-      maskExt: "####",
       users: [],
       roles: [],
       dialog: false,
       headers: [
-        { text: "Tarjeta", sortable: true, value: "employeeId" },
         { text: "Nombre", sortable: true, value: "name" },
-        { text: "Departamento", sortable: true, value: "departmentName" },
-        { text: "Extensión", sortable: true, value: "officePhoneExt" },
-        { text: "Correo", sortable: true, value: "email" },
-        { text: "Celular", sortable: true, value: "mobilePhone" },
+        { text: "Role", sortable: true, value: "roleName" },
+        { text: "Correo", sortable: false, value: "email" },
         { text: "Opciones", value: "options", sortable: false }
       ],
       rules: {
         required: value => !!value || "Requerido.",
-        min: v => v.length >= 8 || 'Minimo 8 caracteres.',
         email: value => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
           return pattern.test(value) || "Correo Inválido.";
@@ -131,21 +124,20 @@ export default {
       search: "",
       editedIndex: -1,
       userModel: {
-        employeeKey: 0,
-        employeeId: "",
+        userKey: 0,
         name: "",
-        departmentKey: 0,
-        officePhone: "",
-        officePhoneExt: "",
+        roleKey: 0,
         email: "",
-        mobilePhone: "",
-        comments: ""
+        password: "",
+        isNewPassword: false,
+        password_hash: "",
+        password_salt: ""
       }
     };
   },
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Nuevo Empleado" : "Actualizar Empleado";
+      return this.editedIndex === -1 ? "Nuevo Usuario" : "Actualizar Usuario";
     }
   },
 
@@ -172,7 +164,7 @@ export default {
     getUsers() {
       let me = this;
       axios
-        .get("api/Employees/GetEmployees")
+        .get("api/Users/GetUsers")
         .then(function(response) {
           me.users = response.data;
         })
@@ -183,7 +175,7 @@ export default {
     getRoles() {
       let me = this;
       axios
-        .get("api/Departments/GetDepartments")
+        .get("api/Roles/GetRoles")
         .then(function(response) {
           me.roles = response.data;
         })
@@ -200,7 +192,7 @@ export default {
     deleteItem(item) {
       this.$swal
         .fire({
-          title: "¿Está Seguro de Eliminar este empleado?",
+          title: "¿Está Seguro de Eliminar este usuario?",
           text: "¡No será posible revertir el cambio!",
           type: "warning",
           showCancelButton: true,
@@ -213,7 +205,7 @@ export default {
             let me = this;
             console.log(item);
             axios
-              .delete("api/Employees/DeleteEmployee/" + item.employeeKey)
+              .delete("api/Users/DeleteUser/" + item.userKey)
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
@@ -223,7 +215,7 @@ export default {
                   me.clean();
                   me.displayNotification(
                     "success",
-                    "Se eliminó el empleado correctamente."
+                    "Se eliminó el usuario correctamente."
                   );
                 }
               })
@@ -244,15 +236,14 @@ export default {
 
     clean() {
       this.userModel = {
-        employeeKey: 0,
-        employeeId: "",
+        userKey: 0,
         name: "",
-        departmentKey: 0,
-        officePhone: "",
-        officePhoneExt: "",
+        roleKey: 0,
         email: "",
-        mobilePhone: "",
-        comments: ""
+        password: "",
+        isNewPassword: false,
+        password_hash: "",
+        password_salt: ""
       };
     },
 
@@ -260,7 +251,7 @@ export default {
       if (this.editedIndex > -1) {
         let me = this;
         axios
-          .put("api/Employees/PutEmployee", me.userModel)
+          .put("api/Users/PutUser", me.userModel)
           .then(function(response) {
             if (response.data.result == "ERROR") {
               me.displayNotification("error", response.data.message);
@@ -270,7 +261,7 @@ export default {
               me.clean();
               me.displayNotification(
                 "success",
-                "Se actualizó el empleado correctamente."
+                "Se actualizó el usuario correctamente."
               );
             }
           })
@@ -280,7 +271,7 @@ export default {
       } else {
         let me = this;
         axios
-          .post("api/Employees/PostEmployee", me.userModel)
+          .post("api/Users/PostUser", me.userModel)
           .then(function(response) {
             if (response.data.result == "ERROR") {
               me.displayNotification("error", response.data.message);

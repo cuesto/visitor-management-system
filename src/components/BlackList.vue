@@ -37,12 +37,16 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field label="Nombre*" required v-model="blackListModel.name"></v-text-field>
+                        <v-text-field
+                          label="Nombre*"
+                          :rules="[rules.required]"
+                          v-model="blackListModel.name"
+                        ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
                         <v-text-field
                           label="Cédula*"
-                          required
+                          :rules="[rules.required]"
                           v-mask="mask"
                           v-model="blackListModel.taxNumber"
                         ></v-text-field>
@@ -56,7 +60,6 @@
                           offset-y
                           full-width
                           min-width="290px"
-                          required
                         >
                           <template v-slot:activator="{ on }">
                             <v-text-field
@@ -64,6 +67,7 @@
                               label="Fecha Inicio*"
                               prepend-icon="event"
                               readonly
+                              :rules="[rules.required]"
                               v-on="on"
                             ></v-text-field>
                           </template>
@@ -82,7 +86,6 @@
                           offset-y
                           full-width
                           min-width="290px"
-                          required
                         >
                           <template v-slot:activator="{ on }">
                             <v-text-field
@@ -90,6 +93,7 @@
                               label="Fecha Fin*"
                               prepend-icon="event"
                               readonly
+                              :rules="[rules.required]"
                               v-on="on"
                             ></v-text-field>
                           </template>
@@ -130,7 +134,9 @@
           <v-icon size="sm" color="red" class="mr-1" @click="deleteItem(item)">delete</v-icon>
         </template>
         <template v-slot:no-data>
-          <v-btn color="primary" @click="getBlacklists">Resetear</v-btn>
+          <v-btn color="primary" @click="getBlacklists">
+            <v-icon left dark>autorenew</v-icon>Refrescar
+          </v-btn>
         </template>
       </v-data-table>
     </v-flex>
@@ -147,6 +153,9 @@ export default {
   },
   data() {
     return {
+      rules: {
+        required: value => !!value || "Requerido."
+      },
       mask: "###-#######-#",
       menuStartDate: false,
       menuEndDate: false,
@@ -259,7 +268,7 @@ export default {
     },
 
     clean() {
-      this.blackListModel={
+      this.blackListModel = {
         blackListKey: 0,
         name: "",
         taxNumber: "",

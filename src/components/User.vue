@@ -4,13 +4,13 @@
       <v-data-table
         :headers="headers"
         :search="search"
-        :items="employees"
+        :items="users"
         sort-by="name"
         class="elevation-1"
       >
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-toolbar-title>Empleados</v-toolbar-title>
+            <v-toolbar-title>Usuarios</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-text-field
@@ -25,10 +25,9 @@
             <v-dialog v-model="dialog" persistent max-width="600px">
               <template v-slot:activator="{ on }">
                 <v-btn color="green" dark v-on="on">
-                  <v-icon left dark>person_add</v-icon>Nuevo Empleado
+                  <v-icon left dark>person_add</v-icon>Nuevo Usuario
                 </v-btn>
               </template>
-
               <v-card>
                 <v-card-title>
                   <span class="headline">{{ formTitle }}</span>
@@ -37,56 +36,32 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field label="Tarjeta*" :rules="[rules.required]" v-model="employeeModel.employeeId"></v-text-field>
+                        <v-text-field label="Nombre*" v-model="userModel.name"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
                         <v-select
-                          :items="departments"
+                          :items="roles"
                           item-text="description"
-                          item-value="departmentKey"
-                          v-model="employeeModel.departmentKey"
-                          label="Departamento*"
-                          :rules="[rules.required]"
+                          item-value="roleKey"
+                          v-model="userModel.roleKey"
+                          label="Rol*"
                         ></v-select>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field label="Nombre*" :rules="[rules.required]" v-model="employeeModel.name"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
                         <v-text-field
                           label="Correo*"
-                          v-model="employeeModel.email"
-                          :rules="[rules.required,rules.email]"
+                          v-model="userModel.email"
+                          :rules="[rules.email]"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
+                      <v-col cols="12" sm="6" md="6">
                         <v-text-field
-                          label="Telefono"
-                          v-mask="mask"
-                          v-model="employeeModel.officePhone"
+                          label="Contraseña*"
+                          v-model="userModel.password"
+                          :type="'password'"
+                          :rules="[rules.required, rules.min]"
+                          hint="Debe tener al menos 8 caracteres"
                         ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          label="Extensión"
-                          hint="Extensión de telefono"
-                          v-mask="maskExt"
-                          v-model="employeeModel.officePhoneExt"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          label="Celular"
-                          v-mask="mask"
-                          v-model="employeeModel.mobilePhone"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-textarea
-                          label="Comentarios"
-                          v-model="employeeModel.comments"
-                          hint="Puede digitar cualquier observación o comentario."
-                        ></v-textarea>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -112,7 +87,9 @@
           <v-icon size="sm" color="red" class="mr-1" @click="deleteItem(item)">delete</v-icon>
         </template>
         <template v-slot:no-data>
-          <v-btn color="primary" @click="getEmployees"><v-icon left dark>autorenew</v-icon>Refrescar</v-btn>
+          <v-btn color="primary" @click="getUsers">
+            <v-icon left dark>autorenew</v-icon>Refrescar
+          </v-btn>
         </template>
       </v-data-table>
     </v-flex>
@@ -131,8 +108,8 @@ export default {
     return {
       mask: "(###)-###-####",
       maskExt: "####",
-      employees: [],
-      departments: [],
+      users: [],
+      roles: [],
       dialog: false,
       headers: [
         { text: "Tarjeta", sortable: true, value: "employeeId" },
@@ -145,6 +122,7 @@ export default {
       ],
       rules: {
         required: value => !!value || "Requerido.",
+        min: v => v.length >= 8 || 'Minimo 8 caracteres.',
         email: value => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
           return pattern.test(value) || "Correo Inválido.";
@@ -152,7 +130,7 @@ export default {
       },
       search: "",
       editedIndex: -1,
-      employeeModel: {
+      userModel: {
         employeeKey: 0,
         employeeId: "",
         name: "",
@@ -178,8 +156,8 @@ export default {
   },
 
   created() {
-    this.getEmployees();
-    this.getDepartments();
+    this.getUsers();
+    this.getRoles();
   },
   methods: {
     displayNotification(type, message) {
@@ -191,36 +169,35 @@ export default {
         timer: 3000
       });
     },
-    getEmployees() {
+    getUsers() {
       let me = this;
       axios
         .get("api/Employees/GetEmployees")
         .then(function(response) {
-          me.employees = response.data;
+          me.users = response.data;
         })
         .catch(function(error) {
           console.log(error);
         });
     },
-    getDepartments() {
+    getRoles() {
       let me = this;
       axios
         .get("api/Departments/GetDepartments")
         .then(function(response) {
-          me.departments = response.data;
+          me.roles = response.data;
         })
         .catch(function(error) {
           console.log(error);
         });
     },
     editItem(item) {
-      this.editedIndex = this.employees.indexOf(item);
-      this.employeeModel = Object.assign({}, item);
+      this.editedIndex = this.users.indexOf(item);
+      this.userModel = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-     
       this.$swal
         .fire({
           title: "¿Está Seguro de Eliminar este empleado?",
@@ -234,7 +211,7 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
-             console.log(item);
+            console.log(item);
             axios
               .delete("api/Employees/DeleteEmployee/" + item.employeeKey)
               .then(function(response) {
@@ -242,7 +219,7 @@ export default {
                   me.displayNotification("error", response.data.message);
                 } else {
                   me.close();
-                  me.getEmployees();
+                  me.getUsers();
                   me.clean();
                   me.displayNotification(
                     "success",
@@ -260,13 +237,13 @@ export default {
     close() {
       this.dialog = false;
       setTimeout(() => {
-        this.employeeModel = Object.assign({}, this.defaultItem);
+        this.userModel = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       }, 300);
     },
 
     clean() {
-      this.employeeModel = {
+      this.userModel = {
         employeeKey: 0,
         employeeId: "",
         name: "",
@@ -283,13 +260,13 @@ export default {
       if (this.editedIndex > -1) {
         let me = this;
         axios
-          .put("api/Employees/PutEmployee", me.employeeModel)
+          .put("api/Employees/PutEmployee", me.userModel)
           .then(function(response) {
             if (response.data.result == "ERROR") {
               me.displayNotification("error", response.data.message);
             } else {
               me.close();
-              me.getEmployees();
+              me.getUsers();
               me.clean();
               me.displayNotification(
                 "success",
@@ -303,13 +280,13 @@ export default {
       } else {
         let me = this;
         axios
-          .post("api/Employees/PostEmployee", me.employeeModel)
+          .post("api/Employees/PostEmployee", me.userModel)
           .then(function(response) {
             if (response.data.result == "ERROR") {
               me.displayNotification("error", response.data.message);
             } else {
               me.close();
-              me.getEmployees();
+              me.getUsers();
               me.clean();
               me.displayNotification(
                 "success",

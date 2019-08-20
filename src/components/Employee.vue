@@ -37,7 +37,11 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field label="Tarjeta*" :rules="[rules.required]" v-model="employeeModel.employeeId"></v-text-field>
+                        <v-text-field
+                          label="Tarjeta*"
+                          :rules="[rules.required]"
+                          v-model="employeeModel.employeeId"
+                        ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
                         <v-select
@@ -50,7 +54,11 @@
                         ></v-select>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field label="Nombre*" :rules="[rules.required]" v-model="employeeModel.name"></v-text-field>
+                        <v-text-field
+                          label="Nombre*"
+                          :rules="[rules.required]"
+                          v-model="employeeModel.name"
+                        ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
                         <v-text-field
@@ -112,7 +120,9 @@
           <v-icon size="sm" color="red" class="mr-1" @click="deleteItem(item)">delete</v-icon>
         </template>
         <template v-slot:no-data>
-          <v-btn color="primary" @click="getEmployees"><v-icon left dark>autorenew</v-icon>Refrescar</v-btn>
+          <v-btn color="primary" @click="getEmployees">
+            <v-icon left dark>autorenew</v-icon>Refrescar
+          </v-btn>
         </template>
       </v-data-table>
     </v-flex>
@@ -191,7 +201,7 @@ export default {
         timer: 3000
       });
     },
-    getEmployees() {
+    async getEmployees() {
       let me = this;
       axios
         .get("api/Employees/GetEmployees")
@@ -202,7 +212,7 @@ export default {
           console.log(error);
         });
     },
-    getDepartments() {
+    async getDepartments() {
       let me = this;
       axios
         .get("api/Departments/GetDepartments")
@@ -220,7 +230,6 @@ export default {
     },
 
     deleteItem(item) {
-     
       this.$swal
         .fire({
           title: "¿Está Seguro de Eliminar este empleado?",
@@ -234,7 +243,7 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
-             console.log(item);
+            console.log(item);
             axios
               .delete("api/Employees/DeleteEmployee/" + item.employeeKey)
               .then(function(response) {

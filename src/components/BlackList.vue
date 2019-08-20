@@ -206,7 +206,7 @@ export default {
         timer: 3000
       });
     },
-    getBlacklists() {
+    async getBlacklists() {
       let me = this;
       axios
         .get("api/Blacklists/GetBlackLists")

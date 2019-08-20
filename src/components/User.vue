@@ -132,7 +132,8 @@ export default {
         isNewPassword: false,
         password_hash: "",
         password_salt: ""
-      }
+      },
+      passwordAnt: ""
     };
   },
   computed: {
@@ -161,7 +162,7 @@ export default {
         timer: 3000
       });
     },
-    getUsers() {
+    async getUsers() {
       let me = this;
       axios
         .get("api/Users/GetUsers")
@@ -172,7 +173,7 @@ export default {
           console.log(error);
         });
     },
-    getRoles() {
+    async getRoles() {
       let me = this;
       axios
         .get("api/Roles/GetRoles")
@@ -186,6 +187,8 @@ export default {
     editItem(item) {
       this.editedIndex = this.users.indexOf(item);
       this.userModel = Object.assign({}, item);
+      this.userModel.password = this.userModel.password_hash;
+      this.passwordAnt = this.userModel.password_hash;
       this.dialog = true;
     },
 
@@ -245,11 +248,16 @@ export default {
         password_hash: "",
         password_salt: ""
       };
+      this.passwordAnt = "";
     },
 
     save() {
       if (this.editedIndex > -1) {
         let me = this;
+        if (me.userModel.password != me.passwordAnt) {
+          me.userModel.isNewPassword = true;
+        }
+
         axios
           .put("api/Users/PutUser", me.userModel)
           .then(function(response) {
@@ -270,6 +278,9 @@ export default {
           });
       } else {
         let me = this;
+        me.userModel.isNewPassword = true;
+        me.userModel.password_hash = "";
+        me.userModel.password_salt = "";
         axios
           .post("api/Users/PostUser", me.userModel)
           .then(function(response) {

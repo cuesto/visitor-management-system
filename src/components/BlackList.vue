@@ -208,13 +208,14 @@ export default {
     },
     async getBlacklists() {
       let me = this;
-      axios
+      await axios
         .get("api/Blacklists/GetBlackLists")
         .then(function(response) {
           me.blacklists = response.data;
         })
         .catch(function(error) {
           console.log(error);
+          me.displayNotification("error", error);
         });
     },
     editItem(item) {

@@ -203,24 +203,24 @@ export default {
     },
     async getEmployees() {
       let me = this;
-      axios
+      await axios
         .get("api/Employees/GetEmployees")
         .then(function(response) {
           me.employees = response.data;
         })
         .catch(function(error) {
-          console.log(error);
+          me.displayNotification("error", error);
         });
     },
     async getDepartments() {
       let me = this;
-      axios
+      await axios
         .get("api/Departments/GetDepartments")
         .then(function(response) {
           me.departments = response.data;
         })
         .catch(function(error) {
-          console.log(error);
+          me.displayNotification("error", error);
         });
     },
     editItem(item) {

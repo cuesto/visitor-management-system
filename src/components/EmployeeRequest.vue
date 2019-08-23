@@ -22,7 +22,7 @@
               hide-details
             ></v-text-field>
             <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" persistent max-width="600px">
+            <v-dialog v-model="dialog" persistent max-width="800px">
               <template v-slot:activator="{ on }">
                 <v-btn color="green" dark v-on="on">
                   <v-icon left dark>add</v-icon>Nueva Solicitud
@@ -36,58 +36,204 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          label="Tarjeta*"
+                      <v-col cols="12">
+                        <v-autocomplete
+                          v-model="employeeRequestModel.employeeKey"
+                          :items="employees"
                           :rules="[rules.required]"
-                          v-model="employeeRequestModel.employeeId"
-                        ></v-text-field>
+                          color="blue-grey lighten-2"
+                          label="Empleado"
+                          item-text="displayAutoComplete"
+                          item-value="employeeKey"
+                          hint="Tarjeta - Empleado - Departamento"
+                        ></v-autocomplete>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
-                        <v-select
-                          :items="departments"
-                          item-text="description"
-                          item-value="departmentKey"
-                          v-model="employeeRequestModel.departmentKey"
-                          label="Departamento*"
-                          :rules="[rules.required]"
-                        ></v-select>
+                        <v-row>
+                          <v-text-field
+                            style="width=80%;"
+                            label="RNC*"
+                            :rules="[rules.required]"
+                            v-model="employeeRequestModel.taxNumber"
+                            hint="RNC de la Compañía del visitante"
+                          ></v-text-field>
+                          <v-tooltip v-model="showTooltip" top>
+                            <template v-slot:activator="{ on }">
+                              <v-btn icon v-on="on" @click="verifyRNC">
+                                <v-icon color="green lighten-1">search</v-icon>
+                              </v-btn>
+                            </template>
+                            <span>Verificar en DGII</span>
+                          </v-tooltip>
+                        </v-row>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-text-field
+                          disabled
+                          label="Compañía"
+                          v-model="employeeRequestModel.company"
+                        ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
                         <v-text-field
                           label="Nombre*"
                           :rules="[rules.required]"
-                          v-model="employeeRequestModel.name"
+                          v-model="employeeRequestModel.visitorName"
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
                         <v-text-field
                           label="Correo*"
-                          v-model="employeeRequestModel.email"
+                          v-model="employeeRequestModel.visitorEmail"
                           :rules="[rules.required,rules.email]"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
+                      <v-col cols="12" sm="6" md="6">
                         <v-text-field
                           label="Telefono"
                           v-mask="mask"
-                          v-model="employeeRequestModel.officePhone"
+                          v-model="employeeRequestModel.visitorPhone"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          label="Extensión"
-                          hint="Extensión de telefono"
-                          v-mask="maskExt"
-                          v-model="employeeRequestModel.officePhoneExt"
-                        ></v-text-field>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-select
+                          :items="purposes"
+                          item-text="description"
+                          item-value="purposeKey"
+                          v-model="employeeRequestModel.purposeKey"
+                          label="Propósito*"
+                          :rules="[rules.required]"
+                        ></v-select>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          label="Celular"
-                          v-mask="mask"
-                          v-model="employeeRequestModel.mobilePhone"
-                        ></v-text-field>
+
+                      <v-col cols="12" sm="6" md="6">
+                        <v-menu
+                          v-model="menuStartDate"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="employeeRequestModel.startDate"
+                              label="Fecha Inicio*"
+                              prepend-icon="event"
+                              readonly
+                              :rules="[rules.required]"
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            v-model="employeeRequestModel.startDate"
+                            @input="menuStartDate = false"
+                          ></v-date-picker>
+                        </v-menu>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-menu
+                          ref="starttimemenu"
+                          v-model="menuStartTime"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          :return-value.sync="employeeRequestModel.startTime"
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          max-width="290px"
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="employeeRequestModel.startTime"
+                              label="Hora Inicio"
+                              prepend-icon="access_time"
+                              readonly
+                              v-on="on"
+                              v-mask="maskDate"
+                            ></v-text-field>
+                          </template>
+                          <v-time-picker
+                            v-if="menuStartTime"
+                            v-model="employeeRequestModel.startTime"
+                            full-width
+                            @click:minute="$refs.starttimemenu.save(employeeRequestModel.startTime)"
+                          ></v-time-picker>
+                        </v-menu>
+                      </v-col>
+
+                      <v-col cols="12" sm="6" md="6">
+                        <v-menu
+                          v-model="menuEndDate"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="employeeRequestModel.endDate"
+                              label="Fecha Fin*"
+                              prepend-icon="event"
+                              readonly
+                              :rules="[rules.required]"
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            v-model="employeeRequestModel.endDate"
+                            @input="menuEndDate = false"
+                          ></v-date-picker>
+                        </v-menu>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-menu
+                          ref="endtimemenu"
+                          v-model="menuEndTime"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          :return-value.sync="employeeRequestModel.endTime"
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          max-width="290px"
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="employeeRequestModel.endTime"
+                              label="Hora Fin"
+                              prepend-icon="access_time"
+                              readonly
+                              v-on="on"
+                              v-mask="maskDate"
+                            ></v-text-field>
+                          </template>
+                          <v-time-picker
+                            v-if="menuEndTime"
+                            v-model="employeeRequestModel.endTime"
+                            full-width
+                            @click:minute="$refs.endtimemenu.save(employeeRequestModel.endTime)"
+                          ></v-time-picker>
+                        </v-menu>
+                      </v-col>
+                      <v-col cols="12" v-if="displayRepeat">
+                        <v-switch v-model="repeat" :label="`Repetir`"></v-switch>
+                        <template v-if="repeat">
+                          <v-row justify="space-around">
+                            <v-checkbox v-model="days.mon" class="mx-2" label="L"></v-checkbox>
+                            <v-checkbox v-model="days.tue" class="mx-2" label="M"></v-checkbox>
+                            <v-checkbox v-model="days.wed" class="mx-2" label="X"></v-checkbox>
+                            <v-checkbox v-model="days.thu" class="mx-2" label="J"></v-checkbox>
+                            <v-checkbox v-model="days.fri" class="mx-2" label="V"></v-checkbox>
+                            <v-checkbox v-model="days.sat" class="mx-2" label="S"></v-checkbox>
+                            <v-checkbox v-model="days.sun" class="mx-2" label="D"></v-checkbox>
+                          </v-row>
+                        </template>
                       </v-col>
                       <v-col cols="12">
                         <v-textarea
@@ -139,24 +285,40 @@ export default {
   },
   data() {
     return {
+      showTooltip: false,
+      days: {
+        mon: false,
+        tue: false,
+        wed: false,
+        thu: false,
+        fri: false,
+        sat: false,
+        sun: false
+      },
+      displayRepeat: true,
+      repeat: false,
       mask: "(###)-###-####",
-      maskExt: "####",
+      maskDate: "##:##",
+      menuStartDate: false,
+      menuEndDate: false,
+      menuStartTime: false,
+      menuEndTime: false,
       employeerequest: [],
-      departments: [],
+      employees: [],
+      purposes: [],
       dialog: false,
       headers: [
         { text: "Nombre", sortable: true, value: "visitorName" },
         { text: "Compañía", sortable: true, value: "company" },
         { text: "Teléfono", sortable: true, value: "visitorPhone" },
         { text: "Fecha Esperada", sortable: true, value: "startDate" },
-        { text: "Hora Esperada", sortable: true, value: "startTime" },
+        { text: "Fecha Salida", sortable: true, value: "endDate" },
         { text: "Propósito", sortable: true, value: "purposeDescription" },
         {
           text: "Empleado(Quién lo recibirá)",
           sortable: true,
           value: "employeeName"
         },
-
         { text: "Opciones", value: "options", sortable: false }
       ],
       rules: {
@@ -178,9 +340,9 @@ export default {
         company: "",
         purposeKey: 0,
         startDate: "",
-        startTime: "",
+        startTime: null,
         endDate: "",
-        endTime: "",
+        endTime: null,
         comments: "",
         status: 0,
         employeeName: "",
@@ -199,12 +361,16 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
+    },
+    repeat(val) {
+      if (!val) this.cleanDays();
     }
   },
 
   created() {
     this.getEmployeeRequests();
-    // this.getDepartments();
+    this.getEmployees();
+    this.getPurposes();
   },
   methods: {
     displayNotification(type, message) {
@@ -218,26 +384,63 @@ export default {
     },
     async getEmployeeRequests() {
       let me = this;
-      axios
+      await axios
         .get("api/EmployeeRequests/GetEmployeeRequests")
         .then(function(response) {
           me.employeerequest = response.data;
         })
         .catch(function(error) {
-          console.log(error);
+          me.displayNotification("error", error);
+        });
+    },
+    async getEmployees() {
+      let me = this;
+      await axios
+        .get("api/Employees/GetEmployees")
+        .then(function(response) {
+          me.employees = response.data;
+        })
+        .catch(function(error) {
+          me.displayNotification("error", error);
+        });
+    },
+    async getPurposes() {
+      let me = this;
+      await axios
+        .get("api/Purposes/GetPurposes")
+        .then(function(response) {
+          me.purposes = response.data;
+        })
+        .catch(function(error) {
+          me.displayNotification("error", error);
+        });
+    },
+
+    async verifyRNC() {
+      let me = this;
+      await axios
+        .get("api/Services/VerifyRNC/" + me.employeeRequestModel.taxNumber)
+        .then(function(response) {
+          me.employeeRequestModel.company = response.data.nombre;
+        })
+        .catch(function(error) {
+          me.displayNotification("error", error);
         });
     },
 
     editItem(item) {
       this.editedIndex = this.employeerequest.indexOf(item);
       this.employeeRequestModel = Object.assign({}, item);
+      this.editedIndex > -1
+        ? (this.displayRepeat = false)
+        : (this.displayRepeat = true);
       this.dialog = true;
     },
 
     deleteItem(item) {
       this.$swal
         .fire({
-          title: "¿Está Seguro de Eliminar este empleado?",
+          title: "¿Está Seguro de Eliminar esta solicitud?",
           text: "¡No será posible revertir el cambio!",
           type: "warning",
           showCancelButton: true,
@@ -248,9 +451,11 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
-            console.log(item);
             axios
-              .delete("api/Employees/DeleteEmployee/" + item.employeeKey)
+              .delete(
+                "api/EmployeeRequests/DeleteEmployeeRequest/" +
+                  item.employeeRequestKey
+              )
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
@@ -260,7 +465,7 @@ export default {
                   me.clean();
                   me.displayNotification(
                     "success",
-                    "Se eliminó el empleado correctamente."
+                    "Se eliminó la solicitud correctamente."
                   );
                 }
               })
@@ -273,6 +478,8 @@ export default {
 
     close() {
       this.dialog = false;
+      this.clean();
+      this.cleanDays();
       setTimeout(() => {
         this.employeeRequestModel = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
@@ -290,9 +497,9 @@ export default {
         company: "",
         purposeKey: 0,
         startDate: "",
-        startTime: "",
+        startTime: null,
         endDate: "",
-        endTime: "",
+        endTime: null,
         comments: "",
         status: 0,
         employeeName: "",
@@ -300,11 +507,26 @@ export default {
       };
     },
 
+    cleanDays() {
+      this.days = {
+        mon: false,
+        tue: false,
+        wed: false,
+        thu: false,
+        fri: false,
+        sat: false,
+        sun: false
+      };
+    },
+
     save() {
       if (this.editedIndex > -1) {
         let me = this;
         axios
-          .put("api/Employees/PutEmployee", me.employeeRequestModel)
+          .put(
+            "api/EmployeeRequests/PutEmployeeRequest",
+            me.employeeRequestModel
+          )
           .then(function(response) {
             if (response.data.result == "ERROR") {
               me.displayNotification("error", response.data.message);
@@ -312,6 +534,7 @@ export default {
               me.close();
               me.getEmployeeRequests();
               me.clean();
+              me.cleanDays();
               me.displayNotification(
                 "success",
                 "Se actualizó el empleado correctamente."
@@ -324,7 +547,10 @@ export default {
       } else {
         let me = this;
         axios
-          .post("api/Employees/PostEmployee", me.employeeRequestModel)
+          .post(
+            "api/EmployeeRequests/PostEmployeeRequest",
+            me.employeeRequestModel
+          )
           .then(function(response) {
             if (response.data.result == "ERROR") {
               me.displayNotification("error", response.data.message);

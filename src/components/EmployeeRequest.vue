@@ -197,8 +197,9 @@
                         ></v-select>
                       </v-col>
                       <v-col cols="1" />
+                      <v-col cols="4" v-if="!displayRepeat" />
                       <v-col cols="4" v-if="displayRepeat">
-                        <v-switch v-model="repeat" :label="`Repetir`"></v-switch>
+                        <v-switch v-model="repeat" :label="`Visita Recurrente`"></v-switch>
                         <template v-if="repeat">
                           <v-row justify="space-around">
                             <v-checkbox v-model="days.mon" class="mx-2" label="L"></v-checkbox>
@@ -350,7 +351,8 @@ export default {
         comments: "",
         status: 0,
         employeeName: "",
-        purposeDescription: ""
+        purposeDescription: "",
+        daysList: ""
       }
     };
   },
@@ -383,7 +385,7 @@ export default {
         type: type,
         title: message,
         showConfirmButton: false,
-        timer: 3000
+        timer: 2500
       });
     },
     async getEmployeeRequests() {
@@ -511,7 +513,8 @@ export default {
         comments: "",
         status: 0,
         employeeName: "",
-        purposeDescription: ""
+        purposeDescription: "",
+        daysList: ""
       };
     },
 
@@ -525,6 +528,19 @@ export default {
         sat: false,
         sun: false
       };
+      this.repeat = false;
+    },
+
+    setRepeatedDays() {
+      let dayslist = [];
+      if (this.days.mon) dayslist.push("mon");
+      if (this.days.tue) dayslist.push("tue");
+      if (this.days.wed) dayslist.push("wed");
+      if (this.days.thu) dayslist.push("thu");
+      if (this.days.fri) dayslist.push("fri");
+      if (this.days.sat) dayslist.push("sat");
+      if (this.days.sun) dayslist.push("sun");
+      this.employeeRequestModel.daysList = dayslist.join();
     },
 
     save() {
@@ -554,6 +570,10 @@ export default {
           });
       } else {
         let me = this;
+
+        if (me.repeat) {
+          me.setRepeatedDays();
+        }
         axios
           .post(
             "api/EmployeeRequests/PostEmployeeRequest",

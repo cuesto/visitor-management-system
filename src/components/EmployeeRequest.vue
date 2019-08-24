@@ -22,7 +22,7 @@
               hide-details
             ></v-text-field>
             <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" persistent max-width="800px">
+            <v-dialog v-model="dialog" persistent max-width="auto">
               <template v-slot:activator="{ on }">
                 <v-btn color="green" dark v-on="on">
                   <v-icon left dark>add</v-icon>Nueva Solicitud
@@ -36,7 +36,7 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12">
+                      <v-col cols="7">
                         <v-autocomplete
                           v-model="employeeRequestModel.employeeKey"
                           :items="employees"
@@ -48,65 +48,8 @@
                           hint="Tarjeta - Empleado - Departamento"
                         ></v-autocomplete>
                       </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-row>
-                          <v-text-field
-                            style="width=80%;"
-                            label="RNC*"
-                            :rules="[rules.required]"
-                            v-model="employeeRequestModel.taxNumber"
-                            hint="RNC de la Compañía del visitante"
-                          ></v-text-field>
-                          <v-tooltip v-model="showTooltip" top>
-                            <template v-slot:activator="{ on }">
-                              <v-btn icon v-on="on" @click="verifyRNC">
-                                <v-icon color="green lighten-1">search</v-icon>
-                              </v-btn>
-                            </template>
-                            <span>Verificar en DGII</span>
-                          </v-tooltip>
-                        </v-row>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          disabled
-                          label="Compañía"
-                          v-model="employeeRequestModel.company"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          label="Nombre*"
-                          :rules="[rules.required]"
-                          v-model="employeeRequestModel.visitorName"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          label="Correo*"
-                          v-model="employeeRequestModel.visitorEmail"
-                          :rules="[rules.required,rules.email]"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          label="Telefono"
-                          v-mask="mask"
-                          v-model="employeeRequestModel.visitorPhone"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-select
-                          :items="purposes"
-                          item-text="description"
-                          item-value="purposeKey"
-                          v-model="employeeRequestModel.purposeKey"
-                          label="Propósito*"
-                          :rules="[rules.required]"
-                        ></v-select>
-                      </v-col>
-
-                      <v-col cols="12" sm="6" md="6">
+                      <v-col cols="1" />
+                      <v-col cols="2">
                         <v-menu
                           v-model="menuStartDate"
                           :close-on-content-click="false"
@@ -132,7 +75,7 @@
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
-                      <v-col cols="12" sm="6" md="6">
+                      <v-col cols="2">
                         <v-menu
                           ref="starttimemenu"
                           v-model="menuStartTime"
@@ -163,8 +106,23 @@
                           ></v-time-picker>
                         </v-menu>
                       </v-col>
-
-                      <v-col cols="12" sm="6" md="6">
+                      <v-col cols="3">
+                        <v-text-field
+                          hint="Nombre del Visitante"
+                          label="Nombre*"
+                          :rules="[rules.required]"
+                          v-model="employeeRequestModel.visitorName"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="4">
+                        <v-text-field
+                          label="Correo*"
+                          v-model="employeeRequestModel.visitorEmail"
+                          :rules="[rules.required,rules.email]"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="1" />
+                      <v-col cols="2">
                         <v-menu
                           v-model="menuEndDate"
                           :close-on-content-click="false"
@@ -190,7 +148,7 @@
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
-                      <v-col cols="12" sm="6" md="6">
+                      <v-col cols="2">
                         <v-menu
                           ref="endtimemenu"
                           v-model="menuEndTime"
@@ -221,7 +179,25 @@
                           ></v-time-picker>
                         </v-menu>
                       </v-col>
-                      <v-col cols="12" v-if="displayRepeat">
+                      <v-col cols="3">
+                        <v-text-field
+                          label="Telefono"
+                          v-mask="mask"
+                          v-model="employeeRequestModel.visitorPhone"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="4">
+                        <v-select
+                          :items="purposes"
+                          item-text="description"
+                          item-value="purposeKey"
+                          v-model="employeeRequestModel.purposeKey"
+                          label="Propósito*"
+                          :rules="[rules.required]"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="1" />
+                      <v-col cols="4" v-if="displayRepeat">
                         <v-switch v-model="repeat" :label="`Repetir`"></v-switch>
                         <template v-if="repeat">
                           <v-row justify="space-around">
@@ -235,7 +211,34 @@
                           </v-row>
                         </template>
                       </v-col>
-                      <v-col cols="12">
+                      <v-col cols="3">
+                        <v-text-field
+                          :loading="loadingRNCButton"
+                          label="RNC*"
+                          :rules="[rules.required]"
+                          v-model="employeeRequestModel.taxNumber"
+                          hint="RNC de la Compañía del visitante"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="1">
+                        <v-tooltip v-model="showTooltip" top>
+                          <template v-slot:activator="{ on }">
+                            <v-btn icon v-on="on" @click="verifyRNC">
+                              <v-icon color="green lighten-1">search</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Verificar en DGII</span>
+                        </v-tooltip>
+                      </v-col>
+                      <v-col cols="3">
+                        <v-textarea
+                          :rows="2"
+                          disabled
+                          label="Compañía"
+                          v-model="employeeRequestModel.company"
+                        ></v-textarea>
+                      </v-col>
+                      <v-col cols="7">
                         <v-textarea
                           label="Comentarios"
                           v-model="employeeRequestModel.comments"
@@ -285,6 +288,7 @@ export default {
   },
   data() {
     return {
+      loadingRNCButton: false,
       showTooltip: false,
       days: {
         mon: false,
@@ -418,10 +422,14 @@ export default {
 
     async verifyRNC() {
       let me = this;
+      me.loadingRNCButton = true;
       await axios
         .get("api/Services/VerifyRNC/" + me.employeeRequestModel.taxNumber)
         .then(function(response) {
           me.employeeRequestModel.company = response.data.nombre;
+          me.loadingRNCButton = false;
+          if (response.data.nombre == null)
+            me.displayNotification("error", "El RNC/Cédula es inválido.");
         })
         .catch(function(error) {
           me.displayNotification("error", error);

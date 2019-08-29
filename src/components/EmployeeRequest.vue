@@ -253,7 +253,9 @@
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click="dialog = false">Cerrar</v-btn>
-                  <v-btn color="blue darken-1" text @click="save">Guardar</v-btn>
+                  <v-btn color="blue darken-1" text @click="save">
+                    <v-icon left>save</v-icon>Guardar
+                  </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>

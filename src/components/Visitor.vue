@@ -177,7 +177,7 @@ export default {
         startDate: new Date(),
         endDate: new Date(),
         employeeRequestKey: 0,
-        status: 0
+        status: 1
       },
       employees: [],
       purposes: [],
@@ -189,7 +189,6 @@ export default {
     };
   },
   created() {
-    this.displayNotification("error", "test display");
     this.getEmployees();
     this.getPurposes();
   },
@@ -290,7 +289,7 @@ export default {
         startDate: new Date(),
         endDate: new Date(),
         employeeRequestKey: 0,
-        status: 0
+        status: 1
       };
     },
   }

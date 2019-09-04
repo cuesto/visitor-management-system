@@ -25,6 +25,11 @@ export default new Router({
       component: Visitor
     },
     {
+      path: '/visitors/:id',
+      name: 'visitorId',
+      component: Visitor
+    },
+    {
       path: '/employees',
       name: 'employees',
       component: Employee

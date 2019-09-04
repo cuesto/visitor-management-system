@@ -153,6 +153,7 @@
 <script>
 import axios from "axios";
 import { mask } from "vue-the-mask";
+import router from '../router'
 
 export default {
   data: () => ({
@@ -209,14 +210,7 @@ export default {
     visitorsByPurpose: [],
     headersVisitorsByPurpose: [
       { text: "Tipo visita", sortable: false, value: "name" },
-      { text: "Cantidad", sortable: false, value: "phone" },
-      { text: "Hora Entrada", sortable: true, value: "startTime" },
-      {
-        text: "Empleado(Quién lo recibió)",
-        sortable: true,
-        value: "employeeName"
-      },
-      { text: "Opciones", value: "options", sortable: false }
+      { text: "Cantidad", sortable: false, value: "phone" }
     ]
   }),
   created() {
@@ -254,6 +248,10 @@ export default {
         .catch(function(error) {
           me.displayNotification("error", error);
         });
+    },
+
+    checkIn(item) {
+      router.push({ name: "visitorId",  params: { id: item.employeeRequestKey } });
     },
 
     checkOut(item) {

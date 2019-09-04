@@ -141,13 +141,11 @@
 <script>
 import axios from "axios";
 import { mask } from "vue-the-mask";
+import router from "../router";
 
 export default {
   directives: {
     mask
-  },
-  props: {
-    value: Object
   },
   data() {
     return {
@@ -188,12 +186,14 @@ export default {
         { text: "Masculino", value: 1 },
         { text: "Femenino", value: 2 },
         { text: "Otro", value: 3 }
-      ]
+      ],
+      employeesrequest: []
     };
   },
   created() {
     this.getEmployees();
     this.getPurposes();
+    this.loadEmployeeRequest();
   },
   watch: {
     value: {
@@ -206,6 +206,37 @@ export default {
     }
   },
   methods: {
+    loadEmployeeRequest() {
+      this.id = this.$route.params.id;
+      if (this.id != undefined) {
+        this.getEmployeesRequest();
+      }
+    },
+    async getEmployeesRequest() {
+      let me = this;
+      await axios
+        .get("api/EmployeeRequests/GetEmployeeRequest/" + this.id)
+        .then(function(response) {
+          me.employeesrequest = response.data;
+          me.setVisitorFromRequest();
+        })
+        .catch(function(error) {
+          me.displayNotification("error", error);
+        });
+    },
+
+    setVisitorFromRequest() {
+      this.visitorModel.name = this.employeesrequest.visitorName;
+      this.visitorModel.email = this.employeesrequest.visitorEmail;
+      this.visitorModel.phone = this.employeesrequest.visitorPhone;
+      this.visitorModel.taxNumber = this.employeesrequest.taxNumber;
+      this.visitorModel.company = this.employeesrequest.company;
+      this.visitorModel.employeeKey = this.employeesrequest.employeeKey;
+      this.visitorModel.purposeKey = this.employeesrequest.purposeKey;
+      this.visitorModel.comment = this.employeesrequest.comments;
+      this.visitorModel.employeeRequestKey = this.employeesrequest.employeeRequestKey;
+    },
+
     displayNotification(type, message) {
       this.$swal.fire({
         position: "top-end",
@@ -277,6 +308,11 @@ export default {
                 "success",
                 "Se actualizó el empleado correctamente."
               );
+
+              if (me.employeesrequest != undefined) {
+                me.updateEmployeeRequest();
+              }
+              router.push({ name: "home" });
             }
           })
           .catch(function(error) {
@@ -284,6 +320,24 @@ export default {
           });
       }
     },
+
+    updateEmployeeRequest() {
+      let me = this;
+      me.employeesrequest.status = 1;
+      axios
+        .put("api/EmployeeRequests/PutEmployeeRequest", me.employeesrequest)
+        .then(function(response) {
+          if (response.data.result == "ERROR") {
+            me.displayNotification("error", response.data.message);
+          } else {
+            console.log("update register");
+          }
+        })
+        .catch(function(error) {
+          me.displayNotification("error", error);
+        });
+    },
+
     clean() {
       this.visitorModel = {
         visitorKey: 0,

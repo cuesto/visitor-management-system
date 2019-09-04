@@ -28,51 +28,59 @@
                   <v-icon left dark>person_add</v-icon>Nuevo Usuario
                 </v-btn>
               </template>
-              <v-card>
-                <v-card-title>
-                  <span class="headline">{{ formTitle }}</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field label="Nombre*" v-model="userModel.name"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-select
-                          :items="roles"
-                          item-text="description"
-                          item-value="roleKey"
-                          v-model="userModel.roleKey"
-                          label="Rol*"
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          label="Correo*"
-                          v-model="userModel.email"
-                          :rules="[rules.email]"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          label="Contraseña*"
-                          v-model="userModel.password"
-                          :type="'password'"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                  <small>*indica campo requerido.</small>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="dialog = false">Cerrar</v-btn>
-                  <v-btn color="blue darken-1" text @click="save">
-                    <v-icon left>save</v-icon>Guardar
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
+              <v-form ref="form">
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">{{ formTitle }}</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-text-field
+                            label="Nombre*"
+                            :rules="[rules.required]"
+                            v-model="userModel.name"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-select
+                            :items="roles"
+                            item-text="description"
+                            item-value="roleKey"
+                            v-model="userModel.roleKey"
+                            label="Rol*"
+                            :rules="[rules.required]"
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-text-field
+                            label="Correo*"
+                            v-model="userModel.email"
+                            :rules="[rules.required,rules.email]"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-text-field
+                            label="Contraseña*"
+                            v-model="userModel.password"
+                            :type="'password'"
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                    <small>*indica campo requerido.</small>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="dialog = false">Cerrar</v-btn>
+                    <v-btn color="blue darken-1" text @click="save">
+                      <v-icon left>save</v-icon>Guardar
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-form>
             </v-dialog>
           </v-toolbar>
         </template>
@@ -254,53 +262,55 @@ export default {
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        let me = this;
-        if (me.userModel.password != me.passwordAnt) {
-          me.userModel.isNewPassword = true;
-        }
+      if (this.$refs.form.validate()) {
+        if (this.editedIndex > -1) {
+          let me = this;
+          if (me.userModel.password != me.passwordAnt) {
+            me.userModel.isNewPassword = true;
+          }
 
-        axios
-          .put("api/Users/PutUser", me.userModel)
-          .then(function(response) {
-            if (response.data.result == "ERROR") {
-              me.displayNotification("error", response.data.message);
-            } else {
-              me.close();
-              me.getUsers();
-              me.clean();
-              me.displayNotification(
-                "success",
-                "Se actualizó el usuario correctamente."
-              );
-            }
-          })
-          .catch(function(error) {
-            me.displayNotification("error", error);
-          });
-      } else {
-        let me = this;
-        me.userModel.isNewPassword = true;
-        me.userModel.password_hash = "";
-        me.userModel.password_salt = "";
-        axios
-          .post("api/Users/PostUser", me.userModel)
-          .then(function(response) {
-            if (response.data.result == "ERROR") {
-              me.displayNotification("error", response.data.message);
-            } else {
-              me.close();
-              me.getUsers();
-              me.clean();
-              me.displayNotification(
-                "success",
-                "Se creó el registro correctamente."
-              );
-            }
-          })
-          .catch(function(error) {
-            me.displayNotification("error", error);
-          });
+          axios
+            .put("api/Users/PutUser", me.userModel)
+            .then(function(response) {
+              if (response.data.result == "ERROR") {
+                me.displayNotification("error", response.data.message);
+              } else {
+                me.close();
+                me.getUsers();
+                me.clean();
+                me.displayNotification(
+                  "success",
+                  "Se actualizó el usuario correctamente."
+                );
+              }
+            })
+            .catch(function(error) {
+              me.displayNotification("error", error);
+            });
+        } else {
+          let me = this;
+          me.userModel.isNewPassword = true;
+          me.userModel.password_hash = "";
+          me.userModel.password_salt = "";
+          axios
+            .post("api/Users/PostUser", me.userModel)
+            .then(function(response) {
+              if (response.data.result == "ERROR") {
+                me.displayNotification("error", response.data.message);
+              } else {
+                me.close();
+                me.getUsers();
+                me.clean();
+                me.displayNotification(
+                  "success",
+                  "Se creó el registro correctamente."
+                );
+              }
+            })
+            .catch(function(error) {
+              me.displayNotification("error", error);
+            });
+        }
       }
     }
   }

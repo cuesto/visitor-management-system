@@ -28,100 +28,101 @@
                   <v-icon left dark>add</v-icon>Nuevo Registro
                 </v-btn>
               </template>
-
-              <v-card>
-                <v-card-title>
-                  <span class="headline">{{ formTitle }}</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          label="Nombre*"
-                          :rules="[rules.required]"
-                          v-model="blackListModel.name"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          label="Cédula*"
-                          :rules="[rules.required]"
-                          v-mask="mask"
-                          v-model="blackListModel.taxNumber"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-menu
-                          v-model="menuStartDate"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          transition="scale-transition"
-                          offset-y
-                          full-width
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <v-text-field
+              <v-form ref="form">
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">{{ formTitle }}</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-text-field
+                            label="Nombre*"
+                            :rules="[rules.required]"
+                            v-model="blackListModel.name"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-text-field
+                            label="Cédula*"
+                            :rules="[rules.required]"
+                            v-mask="mask"
+                            v-model="blackListModel.taxNumber"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-menu
+                            v-model="menuStartDate"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            full-width
+                            min-width="290px"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                v-model="blackListModel.startDate"
+                                label="Fecha Inicio*"
+                                prepend-icon="event"
+                                readonly
+                                :rules="[rules.required]"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
                               v-model="blackListModel.startDate"
-                              label="Fecha Inicio*"
-                              prepend-icon="event"
-                              readonly
-                              :rules="[rules.required]"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            v-model="blackListModel.startDate"
-                            @input="menuStartDate = false"
-                          ></v-date-picker>
-                        </v-menu>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-menu
-                          v-model="menuEndDate"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          transition="scale-transition"
-                          offset-y
-                          full-width
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <v-text-field
+                              @input="menuStartDate = false"
+                            ></v-date-picker>
+                          </v-menu>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-menu
+                            v-model="menuEndDate"
+                            :close-on-content-click="false"
+                            :nudge-right="40"
+                            transition="scale-transition"
+                            offset-y
+                            full-width
+                            min-width="290px"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                v-model="blackListModel.endDate"
+                                label="Fecha Fin*"
+                                prepend-icon="event"
+                                readonly
+                                :rules="[rules.required]"
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
                               v-model="blackListModel.endDate"
-                              label="Fecha Fin*"
-                              prepend-icon="event"
-                              readonly
-                              :rules="[rules.required]"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            v-model="blackListModel.endDate"
-                            @input="menuEndDate = false"
-                          ></v-date-picker>
-                        </v-menu>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-textarea
-                          label="Comentarios"
-                          v-model="blackListModel.comment"
-                          hint="Puede digitar cualquier observación o comentario."
-                        ></v-textarea>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                  <small>*indica campo requerido.</small>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="dialog = false">Cerrar</v-btn>
-                  <v-btn color="blue darken-1" text @click="save">
-                    <v-icon left>save</v-icon>Guardar
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
+                              @input="menuEndDate = false"
+                            ></v-date-picker>
+                          </v-menu>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-textarea
+                            label="Comentarios"
+                            v-model="blackListModel.comment"
+                            hint="Puede digitar cualquier observación o comentario."
+                          ></v-textarea>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                    <small>*indica campo requerido.</small>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="dialog = false">Cerrar</v-btn>
+                    <v-btn color="blue darken-1" text @click="save">
+                      <v-icon left>save</v-icon>Guardar
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-form>
             </v-dialog>
           </v-toolbar>
         </template>
@@ -282,46 +283,48 @@ export default {
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        let me = this;
-        axios
-          .put("api/BlackLists/PutBlackList", me.blackListModel)
-          .then(function(response) {
-            if (response.data.result == "ERROR") {
-              me.displayNotification("error", response.data.message);
-            } else {
-              me.close();
-              me.getBlacklists();
-              me.clean();
-              me.displayNotification(
-                "success",
-                "Se actualizó el registro correctamente."
-              );
-            }
-          })
-          .catch(function(error) {
-            me.displayNotification("error", error);
-          });
-      } else {
-        let me = this;
-        axios
-          .post("api/BlackLists/PostBlackList", me.blackListModel)
-          .then(function(response) {
-            if (response.data.result == "ERROR") {
-              me.displayNotification("error", response.data.message);
-            } else {
-              me.close();
-              me.getBlacklists();
-              me.clean();
-              me.displayNotification(
-                "success",
-                "Se creó el registro correctamente."
-              );
-            }
-          })
-          .catch(function(error) {
-            me.displayNotification("error", error);
-          });
+      if (this.$refs.form.validate()) {
+        if (this.editedIndex > -1) {
+          let me = this;
+          axios
+            .put("api/BlackLists/PutBlackList", me.blackListModel)
+            .then(function(response) {
+              if (response.data.result == "ERROR") {
+                me.displayNotification("error", response.data.message);
+              } else {
+                me.close();
+                me.getBlacklists();
+                me.clean();
+                me.displayNotification(
+                  "success",
+                  "Se actualizó el registro correctamente."
+                );
+              }
+            })
+            .catch(function(error) {
+              me.displayNotification("error", error);
+            });
+        } else {
+          let me = this;
+          axios
+            .post("api/BlackLists/PostBlackList", me.blackListModel)
+            .then(function(response) {
+              if (response.data.result == "ERROR") {
+                me.displayNotification("error", response.data.message);
+              } else {
+                me.close();
+                me.getBlacklists();
+                me.clean();
+                me.displayNotification(
+                  "success",
+                  "Se creó el registro correctamente."
+                );
+              }
+            })
+            .catch(function(error) {
+              me.displayNotification("error", error);
+            });
+        }
       }
     }
   }

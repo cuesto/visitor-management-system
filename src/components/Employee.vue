@@ -28,86 +28,87 @@
                   <v-icon left dark>person_add</v-icon>Nuevo Empleado
                 </v-btn>
               </template>
-
-              <v-card>
-                <v-card-title>
-                  <span class="headline">{{ formTitle }}</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          label="Tarjeta*"
-                          :rules="[rules.required]"
-                          v-model="employeeModel.employeeId"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-select
-                          :items="departments"
-                          item-text="description"
-                          item-value="departmentKey"
-                          v-model="employeeModel.departmentKey"
-                          label="Departamento*"
-                          :rules="[rules.required]"
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          label="Nombre*"
-                          :rules="[rules.required]"
-                          v-model="employeeModel.name"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          label="Correo*"
-                          v-model="employeeModel.email"
-                          :rules="[rules.required,rules.email]"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          label="Telefono"
-                          v-mask="mask"
-                          v-model="employeeModel.officePhone"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          label="Extensión"
-                          hint="Extensión de telefono"
-                          v-mask="maskExt"
-                          v-model="employeeModel.officePhoneExt"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          label="Celular"
-                          v-mask="mask"
-                          v-model="employeeModel.mobilePhone"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-textarea
-                          label="Comentarios"
-                          v-model="employeeModel.comments"
-                          hint="Puede digitar cualquier observación o comentario."
-                        ></v-textarea>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                  <small>*indica campo requerido.</small>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="dialog = false">Cerrar</v-btn>
-                  <v-btn color="blue darken-1" text @click="save">
-                    <v-icon left>save</v-icon>Guardar
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
+              <v-form ref="form">
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">{{ formTitle }}</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-text-field
+                            label="Tarjeta*"
+                            :rules="[rules.required]"
+                            v-model="employeeModel.employeeId"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-select
+                            :items="departments"
+                            item-text="description"
+                            item-value="departmentKey"
+                            v-model="employeeModel.departmentKey"
+                            label="Departamento*"
+                            :rules="[rules.required]"
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-text-field
+                            label="Nombre*"
+                            :rules="[rules.required]"
+                            v-model="employeeModel.name"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="6">
+                          <v-text-field
+                            label="Correo*"
+                            v-model="employeeModel.email"
+                            :rules="[rules.required,rules.email]"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            label="Telefono"
+                            v-mask="mask"
+                            v-model="employeeModel.officePhone"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            label="Extensión"
+                            hint="Extensión de telefono"
+                            v-mask="maskExt"
+                            v-model="employeeModel.officePhoneExt"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            label="Celular"
+                            v-mask="mask"
+                            v-model="employeeModel.mobilePhone"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-textarea
+                            label="Comentarios"
+                            v-model="employeeModel.comments"
+                            hint="Puede digitar cualquier observación o comentario."
+                          ></v-textarea>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                    <small>*indica campo requerido.</small>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" text @click="dialog = false">Cerrar</v-btn>
+                    <v-btn color="blue darken-1" text @click="save">
+                      <v-icon left>save</v-icon>Guardar
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-form>
             </v-dialog>
           </v-toolbar>
         </template>
@@ -291,46 +292,48 @@ export default {
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        let me = this;
-        axios
-          .put("api/Employees/PutEmployee", me.employeeModel)
-          .then(function(response) {
-            if (response.data.result == "ERROR") {
-              me.displayNotification("error", response.data.message);
-            } else {
-              me.close();
-              me.getEmployees();
-              me.clean();
-              me.displayNotification(
-                "success",
-                "Se actualizó el empleado correctamente."
-              );
-            }
-          })
-          .catch(function(error) {
-            me.displayNotification("error", error);
-          });
-      } else {
-        let me = this;
-        axios
-          .post("api/Employees/PostEmployee", me.employeeModel)
-          .then(function(response) {
-            if (response.data.result == "ERROR") {
-              me.displayNotification("error", response.data.message);
-            } else {
-              me.close();
-              me.getEmployees();
-              me.clean();
-              me.displayNotification(
-                "success",
-                "Se creó el registro correctamente."
-              );
-            }
-          })
-          .catch(function(error) {
-            me.displayNotification("error", error);
-          });
+      if (this.$refs.form.validate()) {
+        if (this.editedIndex > -1) {
+          let me = this;
+          axios
+            .put("api/Employees/PutEmployee", me.employeeModel)
+            .then(function(response) {
+              if (response.data.result == "ERROR") {
+                me.displayNotification("error", response.data.message);
+              } else {
+                me.close();
+                me.getEmployees();
+                me.clean();
+                me.displayNotification(
+                  "success",
+                  "Se actualizó el empleado correctamente."
+                );
+              }
+            })
+            .catch(function(error) {
+              me.displayNotification("error", error);
+            });
+        } else {
+          let me = this;
+          axios
+            .post("api/Employees/PostEmployee", me.employeeModel)
+            .then(function(response) {
+              if (response.data.result == "ERROR") {
+                me.displayNotification("error", response.data.message);
+              } else {
+                me.close();
+                me.getEmployees();
+                me.clean();
+                me.displayNotification(
+                  "success",
+                  "Se creó el registro correctamente."
+                );
+              }
+            })
+            .catch(function(error) {
+              me.displayNotification("error", error);
+            });
+        }
       }
     }
   }

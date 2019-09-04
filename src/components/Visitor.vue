@@ -2,8 +2,8 @@
   <v-container fill-height fluid grid-list-xl>
     <v-layout justify-center wrap>
       <v-flex xs12 md8>
-        <v-card  title="Edit Profile" text="Complete your profile">
-          <v-form>
+        <v-card title="Edit Profile" text="Complete your profile">
+          <v-form ref="form">
             <v-container py-0>
               <v-layout wrap>
                 <v-flex xs12 md5>
@@ -122,13 +122,13 @@
         </v-card>
       </v-flex>
       <v-flex xs12 md4>
-       <div class="text-center">
+        <div class="text-center">
           <v-avatar slot="offset" class="mx-auto d-block" size="130">
             <img src="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg" />
           </v-avatar>
           <v-card-text class="text-xs-center">
             <br />
-            <v-btn color="success" class="mx-auto d-block" >
+            <v-btn color="success" class="mx-auto d-block">
               <v-icon left>cloud_upload</v-icon>Cargar Foto
             </v-btn>
           </v-card-text>
@@ -146,10 +146,13 @@ export default {
   directives: {
     mask
   },
+  props: {
+    value: Object
+  },
   data() {
     return {
-      showTooltip:false,
-      showTooltipRNC:false,
+      showTooltip: false,
+      showTooltipRNC: false,
       loadingRNCButton: false,
       loadingCedulaButton: false,
       maskCedula: "###########",
@@ -191,6 +194,16 @@ export default {
   created() {
     this.getEmployees();
     this.getPurposes();
+  },
+  watch: {
+    value: {
+      handler: function(newValue) {
+        if (newValue) {
+          console.log(newValue);
+          // Utils.mapToObject(newValue, this.visitorModel);
+        }
+      }
+    }
   },
   methods: {
     displayNotification(type, message) {
@@ -251,26 +264,25 @@ export default {
     },
 
     async save() {
-      let me = this;
-      await axios
-        .post("api/Visitors/PostVisitor", me.visitorModel)
-        .then(function(response) {
-          if (response.data.result == "ERROR") {
-            console.log(response.data.message);
-           me.displayNotification("error", response.data.message);
-          } else {
-            console.log("success");
-            me.clean();
-            me.displayNotification(
-              "success",
-              "Se actualizó el empleado correctamente."
-            );
-          }
-        })
-        .catch(function(error) {
-          console.log(error);
-          me.displayNotification("error", error);
-        });
+      if (this.$refs.form.validate()) {
+        let me = this;
+        await axios
+          .post("api/Visitors/PostVisitor", me.visitorModel)
+          .then(function(response) {
+            if (response.data.result == "ERROR") {
+              me.displayNotification("error", response.data.message);
+            } else {
+              me.clean();
+              me.displayNotification(
+                "success",
+                "Se actualizó el empleado correctamente."
+              );
+            }
+          })
+          .catch(function(error) {
+            me.displayNotification("error", error);
+          });
+      }
     },
     clean() {
       this.visitorModel = {
@@ -291,7 +303,7 @@ export default {
         employeeRequestKey: 0,
         status: 1
       };
-    },
+    }
   }
 };
 </script>  

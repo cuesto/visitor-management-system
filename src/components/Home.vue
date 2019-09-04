@@ -5,9 +5,32 @@
         <v-card-text>
           <v-container>
             <v-row cols="6">
-              <v-col>
+              <v-col cols="5">
                 <v-card>
-                  <template>
+                  <v-data-table
+                    dense
+                    hide-default-footer
+                    :items-per-page="5"
+                    :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
+                    :headers="headersVisitorsByPurpose"
+                    :items="visitorsByPurpose"
+                    sort-by="PurposeKey"
+                    class="elevation-1"
+                  >
+                    <template v-slot:top>
+                      <v-toolbar flat color="white">
+                        <v-toolbar-title>Propósio de Visitas</v-toolbar-title>
+                        <v-divider class="mx-4" inset vertical></v-divider>
+                        <v-spacer></v-spacer>
+                      </v-toolbar>
+                    </template>
+                    <template v-slot:no-data>
+                      <v-btn color="primary" @click="getVisitorsByPurpose">
+                        <v-icon left dark>autorenew</v-icon>Refrescar
+                      </v-btn>
+                    </template>
+                  </v-data-table>
+                  <!-- <template>
                     <v-card class="mx-auto text-center" color="green" dark max-width="600">
                       <v-card-text>
                         <v-sheet color="rgba(0, 0, 0, .12)">
@@ -23,55 +46,54 @@
                           </v-sparkline>
                         </v-sheet>
                       </v-card-text>
-
                       <v-card-text>
                         <div class="display-1 font-weight-thin">Visitas Histórico</div>
                       </v-card-text>
                     </v-card>
-                  </template>
+                  </template>-->
                 </v-card>
               </v-col>
-              <v-col cols="6">
+              <v-col cols="7">
                 <v-card>
-                  <div>
-                    <v-data-table
-                      :headers="headersVisitors"
-                      :search="searchVisitors"
-                      :items="visitors"
-                      sort-by="visitorKey"
-                      class="elevation-1"
-                    >
-                      <template v-slot:top>
-                        <v-toolbar flat color="white">
-                          <v-toolbar-title>Visitantes - Dentro</v-toolbar-title>
-                          <v-divider class="mx-4" inset vertical></v-divider>
-                          <v-spacer></v-spacer>
-                          <v-text-field
-                            class="text-xs-center"
-                            v-model="searchVisitors"
-                            append-icon="search"
-                            label="Búsqueda"
-                            single-line
-                            hide-details
-                          ></v-text-field>
-                        </v-toolbar>
-                      </template>
-                      <template v-slot:item.options="{ item }">
-                        <v-icon
-                          size="sm"
-                          variant="outline-info"
-                          color="red"
-                          class="mr-1"
-                          @click="checkOut(item)"
-                        >call_made</v-icon>
-                      </template>
-                      <template v-slot:no-data>
-                        <v-btn color="primary" @click="getVisitors">
-                          <v-icon left dark>autorenew</v-icon>Refrescar
-                        </v-btn>
-                      </template>
-                    </v-data-table>
-                  </div>
+                  <v-data-table
+                    :items-per-page="5"
+                    :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
+                    :headers="headersVisitors"
+                    :search="searchVisitors"
+                    :items="visitors"
+                    sort-by="visitorKey"
+                    class="elevation-1"
+                  >
+                    <template v-slot:top>
+                      <v-toolbar flat color="white">
+                        <v-toolbar-title>Visitantes - Dentro</v-toolbar-title>
+                        <v-divider class="mx-4" inset vertical></v-divider>
+                        <v-spacer></v-spacer>
+                        <v-text-field
+                          class="text-xs-center"
+                          v-model="searchVisitors"
+                          append-icon="search"
+                          label="Búsqueda"
+                          single-line
+                          hide-details
+                        ></v-text-field>
+                      </v-toolbar>
+                    </template>
+                    <template v-slot:item.options="{ item }">
+                      <v-icon
+                        size="sm"
+                        variant="outline-info"
+                        color="red"
+                        class="mr-1"
+                        @click="checkOut(item)"
+                      >call_made</v-icon>
+                    </template>
+                    <template v-slot:no-data>
+                      <v-btn color="primary" @click="getVisitors">
+                        <v-icon left dark>autorenew</v-icon>Refrescar
+                      </v-btn>
+                    </template>
+                  </v-data-table>
                 </v-card>
               </v-col>
             </v-row>
@@ -80,6 +102,8 @@
               <v-col>
                 <v-card>
                   <v-data-table
+                    :items-per-page="5"
+                    :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
                     :headers="headersEmployeeRequest"
                     :search="searchEmployeesRequest"
                     :items="employeesrequest"
@@ -173,7 +197,6 @@ export default {
     headersVisitors: [
       { text: "Nombre", sortable: true, value: "name" },
       { text: "Celular", sortable: true, value: "phone" },
-      // { text: "Fecha Entrada", sortable: true, value: "startDate" },
       { text: "Hora Entrada", sortable: true, value: "startTime" },
       {
         text: "Empleado(Quién lo recibió)",
@@ -183,7 +206,18 @@ export default {
       { text: "Opciones", value: "options", sortable: false }
     ],
 
-    value: [423, 446, 675, 510, 590, 610, 760]
+    visitorsByPurpose: [],
+    headersVisitorsByPurpose: [
+      { text: "Tipo visita", sortable: false, value: "name" },
+      { text: "Cantidad", sortable: false, value: "phone" },
+      { text: "Hora Entrada", sortable: true, value: "startTime" },
+      {
+        text: "Empleado(Quién lo recibió)",
+        sortable: true,
+        value: "employeeName"
+      },
+      { text: "Opciones", value: "options", sortable: false }
+    ]
   }),
   created() {
     this.getEmployeesRequest();
@@ -220,7 +254,47 @@ export default {
         .catch(function(error) {
           me.displayNotification("error", error);
         });
-    }
+    },
+
+    checkOut(item) {
+      this.$swal
+        .fire({
+          title: "¿Está Seguro de dar salida a esta persona?",
+          text: "¡No será posible revertir el cambio!",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          confirmButtonText: "¡Si!",
+          cancelButtonText: "Cancelar"
+        })
+        .then(result => {
+          if (result.value) {
+            let me = this;
+            console.log(item);
+            item.status = 2;
+            axios
+              .put("api/Visitors/PutVisitor", item)
+              .then(function(response) {
+                if (response.data.result == "ERROR") {
+                  me.displayNotification("error", response.data.message);
+                } else {
+                  //me.close();
+                  me.getVisitors();
+
+                  me.displayNotification(
+                    "success",
+                    "Se dio salida a la persona correctamente."
+                  );
+                }
+              })
+              .catch(function(error) {
+                me.displayNotification("error", error);
+              });
+          }
+        });
+    },
+
+    getVisitorsByPurpose() {}
   }
 };
 </script>

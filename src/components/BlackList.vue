@@ -193,6 +193,7 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
+      if(this.$refs.form != undefined) this.$refs.form.resetValidation();      
     }
   },
 

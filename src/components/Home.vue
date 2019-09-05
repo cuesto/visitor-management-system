@@ -2,35 +2,34 @@
   <v-layout align-start>
     <v-flex>
       <v-card>
-        <v-card-text>
-          <v-container>
-            <v-row cols="6">
-              <v-col cols="5">
-                <v-card>
-                  <v-data-table
-                    dense
-                    hide-default-footer
-                    :items-per-page="5"
-                    :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
-                    :headers="headersVisitorsByPurpose"
-                    :items="visitorsByPurpose"
-                    sort-by="PurposeKey"
-                    class="elevation-1"
-                  >
-                    <template v-slot:top>
-                      <v-toolbar flat color="white">
-                        <v-toolbar-title>Propósio de Visitas</v-toolbar-title>
-                        <v-divider class="mx-4" inset vertical></v-divider>
-                        <v-spacer></v-spacer>
-                      </v-toolbar>
-                    </template>
-                    <template v-slot:no-data>
-                      <v-btn color="primary" @click="getVisitorsByPurpose">
-                        <v-icon left dark>autorenew</v-icon>Refrescar
-                      </v-btn>
-                    </template>
-                  </v-data-table>
-                  <!-- <template>
+        <v-container>
+          <v-row cols="6">
+            <v-col cols="5">
+              <v-card>
+                <v-data-table
+                  
+                  
+                  :items-per-page="5"
+                  :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
+                  :headers="headersVisitorsByPurpose"
+                  :items="visitorsByPurpose"
+                  sort-by="PurposeKey"
+                  class="elevation-1"
+                >
+                  <template v-slot:top>
+                    <v-toolbar flat color="#03a9f4">
+                      <v-toolbar-title>Propósito de Visitas</v-toolbar-title>
+                      <v-divider class="mx-4" inset vertical></v-divider>
+                      <v-spacer></v-spacer>
+                    </v-toolbar>
+                  </template>
+                  <template v-slot:no-data>
+                    <v-btn color="primary" @click="getVisitorsByPurpose">
+                      <v-icon left dark>autorenew</v-icon>Refrescar
+                    </v-btn>
+                  </template>
+                </v-data-table>
+                <!-- <template>
                     <v-card class="mx-auto text-center" color="green" dark max-width="600">
                       <v-card-text>
                         <v-sheet color="rgba(0, 0, 0, .12)">
@@ -50,101 +49,100 @@
                         <div class="display-1 font-weight-thin">Visitas Histórico</div>
                       </v-card-text>
                     </v-card>
-                  </template>-->
-                </v-card>
-              </v-col>
-              <v-col cols="7">
-                <v-card>
-                  <v-data-table
-                    :items-per-page="5"
-                    :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
-                    :headers="headersVisitors"
-                    :search="searchVisitors"
-                    :items="visitors"
-                    sort-by="visitorKey"
-                    class="elevation-1"
-                  >
-                    <template v-slot:top>
-                      <v-toolbar flat color="white">
-                        <v-toolbar-title>Visitantes - Dentro</v-toolbar-title>
-                        <v-divider class="mx-4" inset vertical></v-divider>
-                        <v-spacer></v-spacer>
-                        <v-text-field
-                          class="text-xs-center"
-                          v-model="searchVisitors"
-                          append-icon="search"
-                          label="Búsqueda"
-                          single-line
-                          hide-details
-                        ></v-text-field>
-                      </v-toolbar>
-                    </template>
-                    <template v-slot:item.options="{ item }">
-                      <v-icon
-                        size="sm"
-                        variant="outline-info"
-                        color="red"
-                        class="mr-1"
-                        @click="checkOut(item)"
-                      >call_made</v-icon>
-                    </template>
-                    <template v-slot:no-data>
-                      <v-btn color="primary" @click="getVisitors">
-                        <v-icon left dark>autorenew</v-icon>Refrescar
-                      </v-btn>
-                    </template>
-                  </v-data-table>
-                </v-card>
-              </v-col>
-            </v-row>
+                </template>-->
+              </v-card>
+            </v-col>
+            <v-col cols="7">
+              <v-card>
+                <v-data-table
+                  :items-per-page="5"
+                  :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
+                  :headers="headersVisitors"
+                  :search="searchVisitors"
+                  :items="visitors"
+                  sort-by="visitorKey"
+                  class="elevation-1"
+                >
+                  <template v-slot:top>
+                    <v-toolbar flat color="#67daff">
+                      <v-toolbar-title>Visitantes - Dentro</v-toolbar-title>
+                      <v-divider class="mx-4" inset vertical></v-divider>
+                      <v-spacer></v-spacer>
+                      <v-text-field
+                        class="text-xs-center"
+                        v-model="searchVisitors"
+                        append-icon="search"
+                        label="Búsqueda"
+                        single-line
+                        hide-details
+                      ></v-text-field>
+                    </v-toolbar>
+                  </template>
+                  <template v-slot:item.options="{ item }">
+                    <v-icon
+                      size="sm"
+                      variant="outline-info"
+                      color="red"
+                      class="mr-1"
+                      @click="checkOut(item)"
+                    >call_made</v-icon>
+                  </template>
+                  <template v-slot:no-data>
+                    <v-btn color="primary" @click="getVisitors">
+                      <v-icon left dark>autorenew</v-icon>Refrescar
+                    </v-btn>
+                  </template>
+                </v-data-table>
+              </v-card>
+            </v-col>
+          </v-row>
 
-            <v-row cols="6">
-              <v-col>
-                <v-card>
-                  <v-data-table
-                    :items-per-page="5"
-                    :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
-                    :headers="headersEmployeeRequest"
-                    :search="searchEmployeesRequest"
-                    :items="employeesrequest"
-                    sort-by="employeeRequestKey"
-                    class="elevation-1"
-                  >
-                    <template v-slot:top>
-                      <v-toolbar flat color="white">
-                        <v-toolbar-title>Visitas Esperadas</v-toolbar-title>
-                        <v-divider class="mx-4" inset vertical></v-divider>
-                        <v-spacer></v-spacer>
-                        <v-text-field
-                          class="text-xs-center"
-                          v-model="searchEmployeesRequest"
-                          append-icon="search"
-                          label="Búsqueda"
-                          single-line
-                          hide-details
-                        ></v-text-field>
-                      </v-toolbar>
-                    </template>
-                    <template v-slot:item.options="{ item }">
-                      <v-icon
-                        size="sm"
-                        variant="outline-info"
-                        color="blue"
-                        class="mr-1"
-                        @click="checkIn(item)"
-                      >done_outline</v-icon>
-                    </template>
-                    <template v-slot:no-data>
-                      <v-btn color="primary" @click="getEmployeesRequest">
-                        <v-icon left dark>autorenew</v-icon>Refrescar
-                      </v-btn>
-                    </template>
-                  </v-data-table>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
+          <v-row cols="6">
+            <v-col>
+              <v-card>
+                <v-data-table
+                  :items-per-page="5"
+                  :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
+                  :headers="headersEmployeeRequest"
+                  :search="searchEmployeesRequest"
+                  :items="employeesrequest"
+                  sort-by="employeeRequestKey"
+                  class="elevation-1"
+                >
+                  <template v-slot:top>
+                    <v-toolbar flat color="#0093c4">
+                      <v-toolbar-title>Visitas Esperadas</v-toolbar-title>
+                      <v-divider class="mx-4" inset vertical></v-divider>
+                      <v-spacer></v-spacer>
+                      <v-text-field
+                        class="text-xs-center"
+                        v-model="searchEmployeesRequest"
+                        append-icon="search"
+                        label="Búsqueda"
+                        single-line
+                        hide-details
+                      ></v-text-field>
+                    </v-toolbar>
+                  </template>
+                  <template v-slot:item.options="{ item }">
+                    <v-icon
+                      size="sm"
+                      variant="outline-info"
+                      color="blue"
+                      class="mr-1"
+                      @click="checkIn(item)"
+                    >done_outline</v-icon>
+                  </template>
+                  <template v-slot:no-data>
+                    <v-btn color="primary" @click="getEmployeesRequest">
+                      <v-icon left dark>autorenew</v-icon>Refrescar
+                    </v-btn>
+                  </template>
+                </v-data-table>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card>
     </v-flex>
   </v-layout>
@@ -153,7 +151,7 @@
 <script>
 import axios from "axios";
 import { mask } from "vue-the-mask";
-import router from '../router'
+import router from "../router";
 
 export default {
   data: () => ({
@@ -198,7 +196,7 @@ export default {
     headersVisitors: [
       { text: "Nombre", sortable: true, value: "name" },
       { text: "Celular", sortable: true, value: "phone" },
-      { text: "Hora Entrada", sortable: true, value: "startTime" },
+      // { text: "Hora Entrada", sortable: true, value: "startTime" },
       {
         text: "Empleado(Quién lo recibió)",
         sortable: true,
@@ -207,10 +205,31 @@ export default {
       { text: "Opciones", value: "options", sortable: false }
     ],
 
-    visitorsByPurpose: [],
+    visitorsByPurpose: [
+      {
+        description: "Mantenimiento",
+        value: 1
+      },
+      {
+        description: "Negocios",
+        value: 2
+      },
+      {
+        description: "VIP",
+        value: 3
+      },
+      {
+        description: "Consultoría",
+        value: 5
+      },
+      {
+        description: "Otros",
+        value: 3
+      }
+    ],
     headersVisitorsByPurpose: [
-      { text: "Tipo visita", sortable: false, value: "name" },
-      { text: "Cantidad", sortable: false, value: "phone" }
+      { text: "Tipo visita", sortable: false, value: "description" },
+      { text: "Cantidad", sortable: false, value: "value" }
     ]
   }),
   created() {
@@ -251,7 +270,10 @@ export default {
     },
 
     checkIn(item) {
-      router.push({ name: "visitorId",  params: { id: item.employeeRequestKey } });
+      router.push({
+        name: "visitorId",
+        params: { id: item.employeeRequestKey }
+      });
     },
 
     checkOut(item) {

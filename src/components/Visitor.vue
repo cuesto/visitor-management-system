@@ -199,7 +199,7 @@ export default {
     value: {
       handler: function(newValue) {
         if (newValue) {
-          console.log(newValue);
+          if(newValue) this.$refs.form.resetValidation();
           // Utils.mapToObject(newValue, this.visitorModel);
         }
       }
@@ -309,10 +309,12 @@ export default {
                 "Se actualizó el empleado correctamente."
               );
 
-              if (me.employeesrequest != undefined) {
+              if (me.employeesrequest.length > 0) {
+                
+                 console.log(me.employeesrequest);
                 me.updateEmployeeRequest();
               }
-              router.push({ name: "home" });
+              router.push({ "name": "home" });
             }
           })
           .catch(function(error) {
@@ -322,20 +324,20 @@ export default {
     },
 
     updateEmployeeRequest() {
-      let me = this;
-      me.employeesrequest.status = 1;
-      axios
-        .put("api/EmployeeRequests/PutEmployeeRequest", me.employeesrequest)
-        .then(function(response) {
-          if (response.data.result == "ERROR") {
-            me.displayNotification("error", response.data.message);
-          } else {
-            console.log("update register");
-          }
-        })
-        .catch(function(error) {
-          me.displayNotification("error", error);
-        });
+      // let me = this;
+      // me.employeesrequest.status = 1;
+      // axios
+      //   .put("api/EmployeeRequests/PutEmployeeRequest", me.employeesrequest)
+      //   .then(function(response) {
+      //     if (response.data.result == "ERROR") {
+      //       me.displayNotification("error", response.data.message);
+      //     } else {
+      //       console.log("update register");
+      //     }
+      //   })
+      //   .catch(function(error) {
+      //     me.displayNotification("error", error);
+      //   });
     },
 
     clean() {

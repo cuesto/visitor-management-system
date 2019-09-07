@@ -61,10 +61,10 @@
         <span class="hidden-sm-and-down">Sistema de Visitas</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn @click="logout" v-if="logged" icon>
+      <v-btn @click="logout" v-if="logged" text>
         <v-icon>logout</v-icon>Salir
       </v-btn>
-      <v-btn :to="{name: 'login'}" v-else>
+      <v-btn :to="{name: 'login'}" v-else text> 
         <v-icon>apps</v-icon>Login
       </v-btn>
     </v-app-bar>

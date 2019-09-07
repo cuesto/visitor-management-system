@@ -19,6 +19,7 @@
                   :rules="[rules.required]"
                 ></v-text-field>
                 <v-text-field
+                  v-on:keyup.enter="login"
                   v-model="password"
                   id="password"
                   label="Contraseña"
@@ -64,7 +65,6 @@ export default {
           return response.data;
         })
         .then(data => {
-            
           this.$store.dispatch("saveToken", data.token);
           this.$router.push({ name: "home" });
         })

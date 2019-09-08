@@ -199,7 +199,7 @@ export default {
     value: {
       handler: function(newValue) {
         if (newValue) {
-          if(newValue) this.$refs.form.resetValidation();
+          if (newValue) this.$refs.form.resetValidation();
           // Utils.mapToObject(newValue, this.visitorModel);
         }
       }
@@ -214,8 +214,10 @@ export default {
     },
     async getEmployeesRequest() {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/EmployeeRequests/GetEmployeeRequest/" + this.id)
+        .get("api/EmployeeRequests/GetEmployeeRequest/" + this.id, conf)
         .then(function(response) {
           me.employeesrequest = response.data;
           me.setVisitorFromRequest();
@@ -248,8 +250,10 @@ export default {
     },
     async getEmployees() {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/Employees/GetEmployees")
+        .get("api/Employees/GetEmployees", conf)
         .then(function(response) {
           me.employees = response.data;
         })
@@ -259,8 +263,10 @@ export default {
     },
     async getPurposes() {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/Purposes/GetPurposes")
+        .get("api/Purposes/GetPurposes", conf)
         .then(function(response) {
           me.purposes = response.data;
         })
@@ -271,13 +277,15 @@ export default {
 
     async verifyRNC(rnc) {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       if (rnc.length == 11) {
         me.loadingCedulaButton = true;
       } else {
         me.loadingRNCButton = true;
       }
       await axios
-        .get("api/Services/VerifyRNC/" + rnc)
+        .get("api/Services/VerifyRNC/" + rnc, conf)
         .then(function(response) {
           if (rnc.length == 11) {
             me.visitorModel.name = response.data.nombre;
@@ -297,8 +305,10 @@ export default {
     async save() {
       if (this.$refs.form.validate()) {
         let me = this;
+        let header = { Authorization: "Bearer " + this.$store.state.token };
+        let conf = { headers: header };
         await axios
-          .post("api/Visitors/PostVisitor", me.visitorModel)
+          .post("api/Visitors/PostVisitor", me.visitorModel, conf)
           .then(function(response) {
             if (response.data.result == "ERROR") {
               me.displayNotification("error", response.data.message);
@@ -310,11 +320,10 @@ export default {
               );
 
               if (me.employeesrequest.length > 0) {
-                
-                 console.log(me.employeesrequest);
+                console.log(me.employeesrequest);
                 me.updateEmployeeRequest();
               }
-              router.push({ "name": "home" });
+              router.push({ name: "home" });
             }
           })
           .catch(function(error) {

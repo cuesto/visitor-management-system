@@ -54,9 +54,9 @@ export default {
     error: null
   }),
   methods: {
-    login() {
+   async login() {
       this.error = null;
-      axios
+    await  axios
         .post("api/Login/Login", {
           userName: this.username,
           password: this.password

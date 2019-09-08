@@ -155,7 +155,7 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
-      if(this.$refs.form != undefined) this.$refs.form.resetValidation();
+      if (this.$refs.form != undefined) this.$refs.form.resetValidation();
     }
   },
 
@@ -175,8 +175,10 @@ export default {
     },
     async getUsers() {
       let me = this;
-      axios
-        .get("api/Users/GetUsers")
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
+      await axios
+        .get("api/Users/GetUsers", conf)
         .then(function(response) {
           me.users = response.data;
         })
@@ -186,8 +188,10 @@ export default {
     },
     async getRoles() {
       let me = this;
-      axios
-        .get("api/Roles/GetRoles")
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
+      await axios
+        .get("api/Roles/GetRoles", conf)
         .then(function(response) {
           me.roles = response.data;
         })
@@ -217,9 +221,10 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
-            console.log(item);
+            let header = { Authorization: "Bearer " + this.$store.state.token };
+            let conf = { headers: header };
             axios
-              .delete("api/Users/DeleteUser/" + item.userKey)
+              .delete("api/Users/DeleteUser/" + item.userKey, conf)
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
@@ -241,7 +246,6 @@ export default {
     },
 
     close() {
-      
       this.dialog = false;
       setTimeout(() => {
         this.userModel = Object.assign({}, this.defaultItem);
@@ -263,16 +267,17 @@ export default {
       this.passwordAnt = "";
     },
 
-    save() {
+    async save() {
       if (this.$refs.form.validate()) {
         if (this.editedIndex > -1) {
           let me = this;
+          let header = { Authorization: "Bearer " + this.$store.state.token };
+          let conf = { headers: header };
           if (me.userModel.password != me.passwordAnt) {
             me.userModel.isNewPassword = true;
           }
-
-          axios
-            .put("api/Users/PutUser", me.userModel)
+          await axios
+            .put("api/Users/PutUser", me.userModel, conf)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);
@@ -291,11 +296,13 @@ export default {
             });
         } else {
           let me = this;
+          let header = { Authorization: "Bearer " + this.$store.state.token };
+          let conf = { headers: header };
           me.userModel.isNewPassword = true;
           me.userModel.password_hash = "";
           me.userModel.password_salt = "";
-          axios
-            .post("api/Users/PostUser", me.userModel)
+          await axios
+            .post("api/Users/PostUser", me.userModel, conf)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);

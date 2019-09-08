@@ -108,13 +108,11 @@ export default {
       return this.$store.state.user;
     },
     isAdmin() {
-      console.log(this.$store.state);
       return (
         this.$store.state.user && this.$store.state.user.role == "administrator"
       );
     },
     isRecep() {
-      console.log(this.$store.state.user.role);
       return (
         this.$store.state.user && this.$store.state.user.role == "recepionist"
       );

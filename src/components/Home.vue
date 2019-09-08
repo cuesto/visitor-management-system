@@ -225,8 +225,10 @@ export default {
     },
     async getEmployeesRequest() {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/EmployeeRequests/GetEmployeeRequests")
+        .get("api/EmployeeRequests/GetEmployeeRequests", conf)
         .then(function(response) {
           me.employeesrequest = response.data;
         })
@@ -236,8 +238,10 @@ export default {
     },
     async getVisitors() {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/Visitors/GetVisitors")
+        .get("api/Visitors/GetVisitors", conf)
         .then(function(response) {
           me.visitors = response.data;
         })
@@ -267,10 +271,11 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
-            console.log(item);
+            let header = { Authorization: "Bearer " + this.$store.state.token };
+            let conf = { headers: header };
             item.status = 2;
             axios
-              .put("api/Visitors/PutVisitor", item)
+              .put("api/Visitors/PutVisitor", item, conf)
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);

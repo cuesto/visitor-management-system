@@ -193,7 +193,7 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
-      if(this.$refs.form != undefined) this.$refs.form.resetValidation();      
+      if (this.$refs.form != undefined) this.$refs.form.resetValidation();
     }
   },
 
@@ -212,8 +212,10 @@ export default {
     },
     async getBlacklists() {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/Blacklists/GetBlackLists")
+        .get("api/Blacklists/GetBlackLists", conf)
         .then(function(response) {
           me.blacklists = response.data;
         })
@@ -242,8 +244,13 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
+            let header = { Authorization: "Bearer " + this.$store.state.token };
+            let conf = { headers: header };
             axios
-              .delete("api/BlackLists/DeleteBlackList/" + item.blackListKey)
+              .delete(
+                "api/BlackLists/DeleteBlackList/" + item.blackListKey,
+                conf
+              )
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
@@ -283,12 +290,14 @@ export default {
       };
     },
 
-    save() {
+    async save() {
       if (this.$refs.form.validate()) {
         if (this.editedIndex > -1) {
           let me = this;
-          axios
-            .put("api/BlackLists/PutBlackList", me.blackListModel)
+          let header = { Authorization: "Bearer " + this.$store.state.token };
+          let conf = { headers: header };
+          await axios
+            .put("api/BlackLists/PutBlackList", me.blackListModel, conf)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);
@@ -307,8 +316,10 @@ export default {
             });
         } else {
           let me = this;
-          axios
-            .post("api/BlackLists/PostBlackList", me.blackListModel)
+          let header = { Authorization: "Bearer " + this.$store.state.token };
+          let conf = { headers: header };
+          await axios
+            .post("api/BlackLists/PostBlackList", me.blackListModel, conf)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);

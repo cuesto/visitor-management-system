@@ -372,7 +372,7 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
-      if(this.$refs.form != undefined) this.$refs.form.resetValidation();
+      if (this.$refs.form != undefined) this.$refs.form.resetValidation();
     },
     repeat(val) {
       if (!val) this.cleanDays();
@@ -396,8 +396,10 @@ export default {
     },
     async getEmployeeRequests() {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/EmployeeRequests/GetEmployeeRequests")
+        .get("api/EmployeeRequests/GetEmployeeRequests", conf)
         .then(function(response) {
           me.employeerequest = response.data;
         })
@@ -407,8 +409,10 @@ export default {
     },
     async getEmployees() {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/Employees/GetEmployees")
+        .get("api/Employees/GetEmployees", conf)
         .then(function(response) {
           me.employees = response.data;
         })
@@ -418,8 +422,10 @@ export default {
     },
     async getPurposes() {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/Purposes/GetPurposes")
+        .get("api/Purposes/GetPurposes", conf)
         .then(function(response) {
           me.purposes = response.data;
         })
@@ -431,8 +437,13 @@ export default {
     async verifyRNC() {
       let me = this;
       me.loadingRNCButton = true;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/Services/VerifyRNC/" + me.employeeRequestModel.taxNumber)
+        .get(
+          "api/Services/VerifyRNC/" + me.employeeRequestModel.taxNumber,
+          conf
+        )
         .then(function(response) {
           me.employeeRequestModel.company = response.data.nombre;
           me.loadingRNCButton = false;
@@ -467,10 +478,13 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
+            let header = { Authorization: "Bearer " + this.$store.state.token };
+            let conf = { headers: header };
             axios
               .delete(
                 "api/EmployeeRequests/DeleteEmployeeRequest/" +
-                  item.employeeRequestKey
+                  item.employeeRequestKey,
+                conf
               )
               .then(function(response) {
                 if (response.data.result == "ERROR") {
@@ -549,14 +563,17 @@ export default {
       this.employeeRequestModel.daysList = dayslist.join();
     },
 
-    save() {
+    async save() {
       if (this.$refs.form.validate()) {
         if (this.editedIndex > -1) {
           let me = this;
-          axios
+          let header = { Authorization: "Bearer " + this.$store.state.token };
+          let conf = { headers: header };
+          await axios
             .put(
               "api/EmployeeRequests/PutEmployeeRequest",
-              me.employeeRequestModel
+              me.employeeRequestModel,
+              conf
             )
             .then(function(response) {
               if (response.data.result == "ERROR") {
@@ -577,14 +594,16 @@ export default {
             });
         } else {
           let me = this;
-
+          let header = { Authorization: "Bearer " + this.$store.state.token };
+          let conf = { headers: header };
           if (me.repeat) {
             me.setRepeatedDays();
           }
-          axios
+          await axios
             .post(
               "api/EmployeeRequests/PostEmployeeRequest",
-              me.employeeRequestModel
+              me.employeeRequestModel,
+              conf
             )
             .then(function(response) {
               if (response.data.result == "ERROR") {

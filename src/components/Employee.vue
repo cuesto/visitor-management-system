@@ -187,7 +187,7 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
-      if(this.$refs.form != undefined) this.$refs.form.resetValidation();
+      if (this.$refs.form != undefined) this.$refs.form.resetValidation();
     }
   },
 
@@ -207,8 +207,10 @@ export default {
     },
     async getEmployees() {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/Employees/GetEmployees")
+        .get("api/Employees/GetEmployees", conf)
         .then(function(response) {
           me.employees = response.data;
         })
@@ -218,8 +220,10 @@ export default {
     },
     async getDepartments() {
       let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
       await axios
-        .get("api/Departments/GetDepartments")
+        .get("api/Departments/GetDepartments", conf)
         .then(function(response) {
           me.departments = response.data;
         })
@@ -247,9 +251,10 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
-            console.log(item);
+            let header = { Authorization: "Bearer " + this.$store.state.token };
+            let conf = { headers: header };
             axios
-              .delete("api/Employees/DeleteEmployee/" + item.employeeKey)
+              .delete("api/Employees/DeleteEmployee/" + item.employeeKey, conf)
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
@@ -292,12 +297,14 @@ export default {
       };
     },
 
-    save() {
+    async save() {
       if (this.$refs.form.validate()) {
         if (this.editedIndex > -1) {
           let me = this;
-          axios
-            .put("api/Employees/PutEmployee", me.employeeModel)
+          let header = { Authorization: "Bearer " + this.$store.state.token };
+          let conf = { headers: header };
+          await axios
+            .put("api/Employees/PutEmployee", me.employeeModel, conf)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);
@@ -316,8 +323,10 @@ export default {
             });
         } else {
           let me = this;
-          axios
-            .post("api/Employees/PostEmployee", me.employeeModel)
+          let header = { Authorization: "Bearer " + this.$store.state.token };
+          let conf = { headers: header };
+          await axios
+            .post("api/Employees/PostEmployee", me.employeeModel, conf)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);

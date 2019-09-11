@@ -122,7 +122,7 @@
         </v-card>
       </v-flex>
       <v-flex xs12 md4>
-        <div class="text-center">
+        <!-- <div class="text-center">
           <v-avatar slot="offset" class="mx-auto d-block" size="130">
             <img src="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg" />
           </v-avatar>
@@ -132,7 +132,7 @@
               <v-icon left>cloud_upload</v-icon>Cargar Foto
             </v-btn>
           </v-card-text>
-        </div>
+        </div>-->
       </v-flex>
     </v-layout>
   </v-container>
@@ -142,6 +142,8 @@
 import axios from "axios";
 import { mask } from "vue-the-mask";
 import router from "../router";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default {
   directives: {

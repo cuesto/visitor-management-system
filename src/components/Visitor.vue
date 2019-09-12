@@ -315,16 +315,14 @@ export default {
             if (response.data.result == "ERROR") {
               me.displayNotification("error", response.data.message);
             } else {
+              if (me.visitorModel.employeeRequestKey > 0) {
+                me.updateEmployeeRequest();
+              }
               me.clean();
               me.displayNotification(
                 "success",
                 "Se actualizó el empleado correctamente."
               );
-              console.log(me.visitorModel.employeeRequestKey);
-              if (me.visitorModel.employeeRequestKey > 0) {
-                console.log(me.employeesrequest);
-                me.updateEmployeeRequest();
-              }
               router.push({ name: "home" });
             }
           })

@@ -56,7 +56,7 @@
                     </v-toolbar>
                   </template>
                   <template v-slot:item.options="{ item }">
-                    <v-icon size="sm" class="mr-1" @click="showTicketModal(item)">print</v-icon>
+                    <!-- <v-icon size="sm" class="mr-1" @click="showTicketModal(item)">print</v-icon> -->
                     <v-icon
                       size="sm"
                       variant="outline-info"

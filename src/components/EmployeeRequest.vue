@@ -22,6 +22,9 @@
               hide-details
             ></v-text-field>
             <v-spacer></v-spacer>
+            <v-btn style="margin-right: 10px" @click="showUploadModal" color="blue" dark>
+              <v-icon left dark>cloud_upload</v-icon>Cargar
+            </v-btn>
             <v-dialog v-model="dialog" persistent max-width="auto">
               <template v-slot:activator="{ on }">
                 <v-btn color="green" dark v-on="on">
@@ -281,12 +284,26 @@
         </template>
       </v-data-table>
     </v-flex>
+    <v-dialog v-model="uploadModal" max-width="500px">
+      <v-card>
+        <v-card-text>
+          <template>
+            <v-file-input v-model="file" accept="file/*.csv" label="Cargar Plantilla"></v-file-input>
+            <v-btn @click="UploadEmployeeRequest()" color="blue" dark>
+              <v-icon left>cloud_upload</v-icon>Cargar
+            </v-btn>
+            <v-btn @click="hideUploadModal()" color="blue darken-1" text>Cancelar</v-btn>
+          </template>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
 <script>
 import axios from "axios";
 import { mask } from "vue-the-mask";
+import Papa from "papaparse";
 
 export default {
   directives: {
@@ -294,6 +311,9 @@ export default {
   },
   data() {
     return {
+      fileProcessed: null,
+      file: null,
+      uploadModal: false,
       loadingRNCButton: false,
       showTooltip: false,
       days: {
@@ -385,6 +405,104 @@ export default {
     this.getPurposes();
   },
   methods: {
+    UploadEmployeeRequest() {
+      if (this.file == null) {
+        this.displayNotification(
+          "error",
+          "El archivo es de un formato incorrecto o no se ha cargado."
+        );
+        return;
+      }
+
+      let me = this;
+
+      Papa.parse(this.file, {
+        header: true,
+        complete: function(results) {
+          me.fileProcessed = results.data;
+          var employeeRequestList = results.data.map(a => {
+            return {
+              employeeRequestKey: 0,
+              employeeKey: me.findEmployeeKey(
+                me.employees.find(b => {
+                  if (b.employeeId == a.TarjetaEmpleado) {
+                    return b.employeeKey;
+                  }
+                })
+              ),
+              visitorName: a.Visitante,
+              visitorEmail: a.Email,
+              visitorPhone: a.Telefono,
+              taxNumber: a.RNCVisitante,
+              company: a.Empresa,
+              purposeKey: me.findPurposeKey(
+                me.purposes.find(b => {
+                  if (b.description == a.Proposito) {
+                    return b.purposeKey;
+                  }
+                })
+              ),
+              startDate: a.FechaInicio,
+              startTime: a.HoraInicio,
+              endDate: a.FechaFin,
+              endTime: a.HoraFin,
+              comments: a.Comentarios,
+              status: 0,
+              employeeName: "",
+              purposeDescription: "",
+              daysList: ""
+            };
+          });
+
+          employeeRequestList = employeeRequestList.filter(
+            x => x.employeeKey != undefined
+          );
+
+          console.log(employeeRequestList);
+
+          let header = { Authorization: "Bearer " + me.$store.state.token };
+          let conf = { headers: header };
+          axios
+            .post(
+              "api/EmployeeRequests/PostEmployeeRequests",
+              employeeRequestList,
+              conf
+            )
+            .then(function(response) {
+              if (response.data.result == "ERROR") {
+                me.displayNotification("error", response.data.message);
+              } else {
+                me.uploadModal = false;
+                me.getEmployeeRequests();
+                me.clean();
+                me.displayNotification(
+                  "success",
+                  "Se cargaron los registros correctamente."
+                );
+              }
+            })
+            .catch(function(error) {
+              me.displayNotification("error", error);
+            });
+        }
+      });
+    },
+
+    findEmployeeKey(employee) {
+      if (employee != undefined) return employee.employeeKey;
+    },
+
+    findPurposeKey(purpose) {
+      if (purpose != undefined) return purpose.purposeKey;
+    },
+
+    showUploadModal() {
+      this.uploadModal = true;
+    },
+    hideUploadModal() {
+      this.uploadModal = false;
+      this.file = null;
+    },
     displayNotification(type, message) {
       this.$swal.fire({
         position: "top-end",

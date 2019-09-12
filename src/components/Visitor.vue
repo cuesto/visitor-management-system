@@ -189,7 +189,7 @@ export default {
         { text: "Femenino", value: 2 },
         { text: "Otro", value: 3 }
       ],
-      employeesrequest: []
+      employeesrequest: null
     };
   },
   created() {
@@ -320,8 +320,8 @@ export default {
                 "success",
                 "Se actualizó el empleado correctamente."
               );
-
-              if (me.employeesrequest.length > 0) {
+              console.log(me.visitorModel.employeeRequestKey);
+              if (me.visitorModel.employeeRequestKey > 0) {
                 console.log(me.employeesrequest);
                 me.updateEmployeeRequest();
               }
@@ -335,20 +335,26 @@ export default {
     },
 
     updateEmployeeRequest() {
-      // let me = this;
-      // me.employeesrequest.status = 1;
-      // axios
-      //   .put("api/EmployeeRequests/PutEmployeeRequest", me.employeesrequest)
-      //   .then(function(response) {
-      //     if (response.data.result == "ERROR") {
-      //       me.displayNotification("error", response.data.message);
-      //     } else {
-      //       console.log("update register");
-      //     }
-      //   })
-      //   .catch(function(error) {
-      //     me.displayNotification("error", error);
-      //   });
+      let me = this;
+      me.employeesrequest.status = 1;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
+      axios
+        .put(
+          "api/EmployeeRequests/PutEmployeeRequest",
+          me.employeesrequest,
+          conf
+        )
+        .then(function(response) {
+          if (response.data.result == "ERROR") {
+            me.displayNotification("error", response.data.message);
+          } else {
+            console.log("update register");
+          }
+        })
+        .catch(function(error) {
+          me.displayNotification("error", error);
+        });
     },
 
     clean() {

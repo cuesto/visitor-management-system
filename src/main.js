@@ -8,7 +8,7 @@ import VueSweetalert2 from 'vue-sweetalert2';
 
 
 Vue.config.productionTip = false;
-axios.defaults.baseURL = 'https://127.0.0.1/';
+axios.defaults.baseURL = 'http://localhost:53280';
 Vue.use(VueSweetalert2);
 
 new Vue({

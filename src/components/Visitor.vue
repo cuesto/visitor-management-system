@@ -19,7 +19,7 @@
                 <v-flex xs1 md1>
                   <v-tooltip v-model="showTooltip" top>
                     <template v-slot:activator="{ on }">
-                      <v-btn icon v-on="on" @click="verifyRNC(visitorModel.taxNumberVisitor)">
+                      <v-btn icon v-on="on" @click="verifyCedula(visitorModel.taxNumberVisitor)">
                         <v-icon color="green lighten-1">search</v-icon>
                       </v-btn>
                     </template>
@@ -277,25 +277,34 @@ export default {
         });
     },
 
+    async verifyCedula(cedula) {
+      let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
+      me.loadingCedulaButton = true;
+      await axios
+        .get("api/Services/VerifyRNC/" + cedula, conf)
+        .then(function(response) {
+          me.visitorModel.name = response.data.nombre;
+          me.loadingCedulaButton = false;
+          if (response.data.nombre == null)
+            me.displayNotification("error", "Cédula/RNC no es válida.");
+        })
+        .catch(function(error) {
+          me.displayNotification("error", error);
+        });
+    },
+
     async verifyRNC(rnc) {
       let me = this;
       let header = { Authorization: "Bearer " + this.$store.state.token };
       let conf = { headers: header };
-      if (rnc.length == 11) {
-        me.loadingCedulaButton = true;
-      } else {
-        me.loadingRNCButton = true;
-      }
+      me.loadingRNCButton = true;
       await axios
         .get("api/Services/VerifyRNC/" + rnc, conf)
         .then(function(response) {
-          if (rnc.length == 11) {
-            me.visitorModel.name = response.data.nombre;
-            me.loadingCedulaButton = false;
-          } else {
-            me.visitorModel.company = response.data.nombre;
-            me.loadingRNCButton = false;
-          }
+          me.visitorModel.company = response.data.nombre;
+          me.loadingRNCButton = false;
           if (response.data.nombre == null)
             me.displayNotification("error", "Cédula/RNC no es válida.");
         })

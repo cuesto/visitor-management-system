@@ -12,7 +12,7 @@ axios.defaults.baseURL = 'http://localhost:53280';
 Vue.use(VueSweetalert2);
 
 new Vue({
-  router,
+  router, 
   store,
   vuetify,
   render: h => h(App)

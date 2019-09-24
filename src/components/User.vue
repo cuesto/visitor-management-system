@@ -273,6 +273,7 @@ export default {
           let me = this;
           let header = { Authorization: "Bearer " + this.$store.state.token };
           let conf = { headers: header };
+          me.userModel.ModifiedBy = this.$store.state.user.name;
           if (me.userModel.password != me.passwordAnt) {
             me.userModel.isNewPassword = true;
           }
@@ -301,6 +302,7 @@ export default {
           me.userModel.isNewPassword = true;
           me.userModel.password_hash = "";
           me.userModel.password_salt = "";
+          me.userModel.CreatedBy = this.$store.state.user.name;
           await axios
             .post("api/Users/PostUser", me.userModel, conf)
             .then(function(response) {

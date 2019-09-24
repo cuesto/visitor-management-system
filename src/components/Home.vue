@@ -431,6 +431,7 @@ export default {
             let header = { Authorization: "Bearer " + this.$store.state.token };
             let conf = { headers: header };
             item.status = 2;
+            item.ModifiedBy = this.$store.state.user.name;
             axios
               .put("api/Visitors/PutVisitor", item, conf)
               .then(function(response) {

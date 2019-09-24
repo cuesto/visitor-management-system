@@ -296,6 +296,7 @@ export default {
           let me = this;
           let header = { Authorization: "Bearer " + this.$store.state.token };
           let conf = { headers: header };
+          me.blackListModel.ModifiedBy = this.$store.state.user.name;
           await axios
             .put("api/BlackLists/PutBlackList", me.blackListModel, conf)
             .then(function(response) {
@@ -318,6 +319,7 @@ export default {
           let me = this;
           let header = { Authorization: "Bearer " + this.$store.state.token };
           let conf = { headers: header };
+          me.blackListModel.CreatedBy = this.$store.state.user.name;
           await axios
             .post("api/BlackLists/PostBlackList", me.blackListModel, conf)
             .then(function(response) {

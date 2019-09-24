@@ -35,11 +35,7 @@
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12 md4>
-                  <v-text-field
-                    label="Correo"
-                    v-model="visitorModel.email"
-                   
-                  ></v-text-field>
+                  <v-text-field label="Correo" v-model="visitorModel.email"></v-text-field>
                 </v-flex>
                 <v-flex xs12 md4>
                   <v-text-field label="Celular" v-mask="mask" v-model="visitorModel.phone"></v-text-field>
@@ -74,11 +70,7 @@
                   </v-tooltip>
                 </v-flex>
                 <v-flex xs12 md6>
-                  <v-text-field
-                    disabled
-                    label="Compañía"
-                    v-model="visitorModel.company"
-                  ></v-text-field>
+                  <v-text-field disabled label="Compañía" v-model="visitorModel.company"></v-text-field>
                 </v-flex>
                 <v-flex xs12 md8>
                   <v-autocomplete
@@ -316,6 +308,7 @@ export default {
         let me = this;
         let header = { Authorization: "Bearer " + this.$store.state.token };
         let conf = { headers: header };
+        me.visitorModel.CreatedBy = this.$store.state.user.name;
         await axios
           .post("api/Visitors/PostVisitor", me.visitorModel, conf)
           .then(function(response) {
@@ -344,6 +337,7 @@ export default {
       me.employeesrequest.status = 1;
       let header = { Authorization: "Bearer " + this.$store.state.token };
       let conf = { headers: header };
+      me.employeesrequest.ModifiedBy = this.$store.state.user.name;
       axios
         .put(
           "api/EmployeeRequests/PutEmployeeRequest",

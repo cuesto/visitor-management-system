@@ -683,6 +683,7 @@ export default {
           let me = this;
           let header = { Authorization: "Bearer " + this.$store.state.token };
           let conf = { headers: header };
+          me.employeeRequestModel.ModifiedBy = this.$store.state.user.name;
           await axios
             .put(
               "api/EmployeeRequests/PutEmployeeRequest",
@@ -710,6 +711,7 @@ export default {
           let me = this;
           let header = { Authorization: "Bearer " + this.$store.state.token };
           let conf = { headers: header };
+          me.employeeRequestModel.CreatedBy = this.$store.state.user.name;
           if (me.repeat) {
             me.setRepeatedDays();
           }

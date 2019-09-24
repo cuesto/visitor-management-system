@@ -303,6 +303,7 @@ export default {
           let me = this;
           let header = { Authorization: "Bearer " + this.$store.state.token };
           let conf = { headers: header };
+          me.employeeModel.ModifiedBy = this.$store.state.user.name;
           await axios
             .put("api/Employees/PutEmployee", me.employeeModel, conf)
             .then(function(response) {
@@ -325,6 +326,7 @@ export default {
           let me = this;
           let header = { Authorization: "Bearer " + this.$store.state.token };
           let conf = { headers: header };
+          me.employeeModel.CreatedBy = this.$store.state.user.name;
           await axios
             .post("api/Employees/PostEmployee", me.employeeModel, conf)
             .then(function(response) {

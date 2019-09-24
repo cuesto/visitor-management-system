@@ -54,9 +54,9 @@ export default {
     error: null
   }),
   methods: {
-   async login() {
+    async login() {
       this.error = null;
-    await  axios
+      await axios
         .post("api/Login/Login", {
           userName: this.username,
           password: this.password
@@ -69,6 +69,9 @@ export default {
           this.$router.push({ name: "home" });
         })
         .catch(err => {
+          if (err.response == undefined) {
+            this.error = "Hay un error de conexión con el servidor.";
+          }
           if (err.response.status == 400) {
             this.error = "No es un usuario válido";
           } else if (err.response.status == 404) {

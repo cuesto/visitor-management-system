@@ -11,7 +11,6 @@
                   :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
                   :headers="headersVisitorsByPurpose"
                   :items="visitorsByPurpose"
-                  sort-by="PurposeKey"
                   class="elevation-1"
                 >
                   <template v-slot:top>
@@ -329,7 +328,6 @@ export default {
     headersVisitors: [
       { text: "Nombre", sortable: true, value: "name" },
       { text: "Celular", sortable: true, value: "phone" },
-      // { text: "Hora Entrada", sortable: true, value: "startTime" },
       {
         text: "Empleado(Quién lo recibió)",
         sortable: true,
@@ -337,29 +335,7 @@ export default {
       },
       { text: "Opciones", value: "options", sortable: false }
     ],
-
-    visitorsByPurpose: [
-      {
-        description: "Mantenimiento",
-        value: 1
-      },
-      {
-        description: "Negocios",
-        value: 2
-      },
-      {
-        description: "VIP",
-        value: 3
-      },
-      {
-        description: "Consultoría",
-        value: 5
-      },
-      {
-        description: "Otros",
-        value: 3
-      }
-    ],
+    visitorsByPurpose: [],
     headersVisitorsByPurpose: [
       { text: "Tipo visita", sortable: false, value: "description" },
       { text: "Cantidad", sortable: false, value: "value" }
@@ -368,6 +344,7 @@ export default {
   created() {
     this.getEmployeesRequest();
     this.getVisitors();
+    this.getVisitorsByPurpose();
   },
   methods: {
     showTicketModal(item) {
@@ -476,7 +453,19 @@ export default {
         });
     },
 
-    getVisitorsByPurpose() {}
+    async getVisitorsByPurpose() {
+      let me = this;
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let conf = { headers: header };
+      await axios
+        .get("api/Purposes/GetVisitorsPurpose", conf)
+        .then(function(response) {
+          me.visitorsByPurpose = response.data;
+        })
+        .catch(function(error) {
+          me.displayNotification("error", error);
+        });
+    }
   }
 };
 </script>

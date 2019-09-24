@@ -29,8 +29,8 @@ export default new Vuex.Store({
       if (token) {
         commit("setToken", token);
         commit("setUser", decode(token));
-      } 
-      router.push({ name: "home" });
+        router.push({ name: "home" });
+      }
     },
     logOut({ commit }) {
       commit("setToken", null);

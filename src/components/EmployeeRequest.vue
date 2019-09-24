@@ -119,11 +119,7 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="4">
-                          <v-text-field
-                            label="Correo*"
-                            v-model="employeeRequestModel.visitorEmail"
-                            :rules="[rules.required,rules.email]"
-                          ></v-text-field>
+                          <v-text-field label="Correo" v-model="employeeRequestModel.visitorEmail"></v-text-field>
                         </v-col>
                         <v-col cols="1" />
                         <v-col cols="2">

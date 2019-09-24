@@ -36,9 +36,9 @@
                 </v-flex>
                 <v-flex xs12 md4>
                   <v-text-field
-                    label="Correo*"
+                    label="Correo"
                     v-model="visitorModel.email"
-                    :rules="[rules.required,rules.email]"
+                   
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12 md4>
@@ -58,8 +58,7 @@
                   <v-text-field
                     v-mask="maskCedula"
                     :loading="loadingRNCButton"
-                    label="RNC*"
-                    :rules="[rules.required]"
+                    label="RNC"
                     v-model="visitorModel.taxNumber"
                     hint="RNC de la Compañía del visitante"
                   ></v-text-field>
@@ -78,7 +77,6 @@
                   <v-text-field
                     disabled
                     label="Compañía"
-                    :rules="[rules.required]"
                     v-model="visitorModel.company"
                   ></v-text-field>
                 </v-flex>
@@ -88,7 +86,7 @@
                     :items="employees"
                     :rules="[rules.required]"
                     color="blue-grey lighten-2"
-                    label="Empleado"
+                    label="Empleado*"
                     item-text="displayAutoComplete"
                     item-value="employeeKey"
                     hint="Tarjeta - Empleado - Departamento"
@@ -330,7 +328,7 @@ export default {
               me.clean();
               me.displayNotification(
                 "success",
-                "Se actualizó el empleado correctamente."
+                "Se creó la visita correctamente."
               );
               router.push({ name: "home" });
             }

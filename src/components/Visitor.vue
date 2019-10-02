@@ -38,7 +38,12 @@
                   <v-text-field label="Correo" v-model="visitorModel.email"></v-text-field>
                 </v-flex>
                 <v-flex xs12 md4>
-                  <v-text-field label="Celular" v-mask="mask" v-model="visitorModel.phone"></v-text-field>
+                  <v-text-field
+                    label="Celular*"
+                    :rules="[rules.required]"
+                    v-mask="mask"
+                    v-model="visitorModel.phone"
+                  ></v-text-field>
                 </v-flex>
                 <v-flex xs12 md4>
                   <v-select

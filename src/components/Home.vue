@@ -443,28 +443,32 @@ export default {
     },
     async getEmployeesRequest() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/EmployeeRequests/GetEmployeeRequests", conf)
+        .get("api/EmployeeRequests/GetEmployeeRequests")
         .then(function(response) {
           me.employeesrequest = response.data;
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          if (error.response.status == 401) {
+            me.displayNotification("error", "Su sesión ha expirado.");
+          } else {
+            me.displayNotification("error", error.message);
+          }
         });
     },
     async getVisitors() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/Visitors/GetVisitors", conf)
+        .get("api/Visitors/GetVisitors")
         .then(function(response) {
           me.visitors = response.data;
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          if (error.response.status == 401) {
+            me.displayNotification("error", "Su sesión ha expirado.");
+          } else {
+            me.displayNotification("error", error.message);
+          }
         });
     },
 
@@ -489,19 +493,15 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
-            let header = { Authorization: "Bearer " + this.$store.state.token };
-            let conf = { headers: header };
             item.status = 2;
             item.ModifiedBy = this.$store.state.user.name;
             axios
-              .put("api/Visitors/PutVisitor", item, conf)
+              .put("api/Visitors/PutVisitor", item)
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
                 } else {
-                  //me.close();
                   me.getVisitors();
-
                   me.displayNotification(
                     "success",
                     "Se dio salida a la persona correctamente."
@@ -509,7 +509,11 @@ export default {
                 }
               })
               .catch(function(error) {
-                me.displayNotification("error", error);
+                if (error.response.status == 401) {
+                  me.displayNotification("error", "Su sesión ha expirado.");
+                } else {
+                  me.displayNotification("error", error.message);
+                }
               });
           }
         });
@@ -517,15 +521,17 @@ export default {
 
     async getVisitorsByPurpose() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/Purposes/GetVisitorsPurpose", conf)
+        .get("api/Purposes/GetVisitorsPurpose")
         .then(function(response) {
           me.visitorsByPurpose = response.data;
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          if (error.response.status == 401) {
+            me.displayNotification("error", "Su sesión ha expirado.");
+          } else {
+            me.displayNotification("error", error.message);
+          }
         });
     }
   }

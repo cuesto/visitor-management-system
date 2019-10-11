@@ -212,10 +212,8 @@ export default {
     },
     async getBlacklists() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/Blacklists/GetBlackLists", conf)
+        .get("api/Blacklists/GetBlackLists")
         .then(function(response) {
           me.blacklists = response.data;
         })
@@ -244,13 +242,8 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
-            let header = { Authorization: "Bearer " + this.$store.state.token };
-            let conf = { headers: header };
             axios
-              .delete(
-                "api/BlackLists/DeleteBlackList/" + item.blackListKey,
-                conf
-              )
+              .delete("api/BlackLists/DeleteBlackList/" + item.blackListKey)
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
@@ -294,11 +287,9 @@ export default {
       if (this.$refs.form.validate()) {
         if (this.editedIndex > -1) {
           let me = this;
-          let header = { Authorization: "Bearer " + this.$store.state.token };
-          let conf = { headers: header };
           me.blackListModel.ModifiedBy = this.$store.state.user.name;
           await axios
-            .put("api/BlackLists/PutBlackList", me.blackListModel, conf)
+            .put("api/BlackLists/PutBlackList", me.blackListModel)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);
@@ -317,11 +308,9 @@ export default {
             });
         } else {
           let me = this;
-          let header = { Authorization: "Bearer " + this.$store.state.token };
-          let conf = { headers: header };
           me.blackListModel.CreatedBy = this.$store.state.user.name;
           await axios
-            .post("api/BlackLists/PostBlackList", me.blackListModel, conf)
+            .post("api/BlackLists/PostBlackList", me.blackListModel)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);

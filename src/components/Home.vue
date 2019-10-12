@@ -450,7 +450,7 @@ export default {
         })
         .catch(function(error) {
           if (error.response.status == 401) {
-            me.displayNotification("error", "Su sesión ha expirado.");
+            //me.displayNotification("error", "Su sesión ha expirado.");
           } else {
             me.displayNotification("error", error.message);
           }
@@ -465,7 +465,7 @@ export default {
         })
         .catch(function(error) {
           if (error.response.status == 401) {
-            me.displayNotification("error", "Su sesión ha expirado.");
+            //me.displayNotification("error", "Su sesión ha expirado.");
           } else {
             me.displayNotification("error", error.message);
           }
@@ -510,7 +510,7 @@ export default {
               })
               .catch(function(error) {
                 if (error.response.status == 401) {
-                  me.displayNotification("error", "Su sesión ha expirado.");
+                  //me.displayNotification("error", "Su sesión ha expirado.");
                 } else {
                   me.displayNotification("error", error.message);
                 }
@@ -528,7 +528,7 @@ export default {
         })
         .catch(function(error) {
           if (error.response.status == 401) {
-            me.displayNotification("error", "Su sesión ha expirado.");
+           // me.displayNotification("error", "Su sesión ha expirado.");
           } else {
             me.displayNotification("error", error.message);
           }

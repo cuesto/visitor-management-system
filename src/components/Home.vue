@@ -342,7 +342,7 @@ export default {
       { text: "Compañía", sortable: true, value: "company" },
       { text: "Teléfono", sortable: true, value: "visitorPhone" },
       { text: "Fecha Esperada", sortable: true, value: "startDate" },
-      { text: "Hora Esperada", sortable: true, value: "endTime" },
+      { text: "Hora Esperada", sortable: true, value: "startTime" },
       { text: "Propósito", sortable: true, value: "purposeDescription" },
       {
         text: "Empleado(Quién lo recibirá)",

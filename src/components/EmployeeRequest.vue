@@ -433,7 +433,10 @@ export default {
               company: a.Empresa,
               purposeKey: me.findPurposeKey(
                 me.purposes.find(b => {
-                  if (b.description == a.Proposito) {
+                  if (
+                    b.description.toLowerCase() ==
+                    (a.Proposito != undefined ? a.Proposito.toLowerCase() : "")
+                  ) {
                     return b.purposeKey;
                   }
                 })

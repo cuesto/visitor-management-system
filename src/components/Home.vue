@@ -183,6 +183,21 @@
                       </td>
                       <td>&nbsp;</td>
                     </tr>
+                    <tr v-if="label.lastname" valign="top">
+                      <td colspan="2">&nbsp;</td>
+                      <td nowrap="true" colspan="5">
+                        <table width="168px" border="0" cellpadding="0" cellspacing="0">
+                          <tr valign="top">
+                            <td align="left">
+                              <span>
+                                <font face="Arial" color="#000000" size="3">{{label.lastname}}</font>
+                              </span>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td>&nbsp;</td>
+                    </tr>
                     <tr valign="top">
                       <td colspan="2">&nbsp;</td>
                       <td nowrap="true" colspan="3">
@@ -389,6 +404,7 @@ export default {
     ],
     label: {
       name: "",
+      lastname: "",
       taxnumber: "",
       purpose: "",
       employee: "",
@@ -404,6 +420,10 @@ export default {
   methods: {
     showTicketModal(item) {
       this.label.name = item.name;
+      if (item.name.length >= 14) {
+        this.label.name = item.name.substring(0, 14);
+        this.label.lastname = item.name.substring(14, item.name.length);
+      }
       this.label.taxnumber = item.taxNumberVisitor;
       this.label.purpose = item.purposeDisplay;
       this.label.employee = item.employeeName;
@@ -416,7 +436,7 @@ export default {
       this.ticketModal = false;
     },
 
-    printPDF() {
+    printPDF(item) {
       var quotes = document.getElementById("ticket");
       html2canvas(quotes).then(function(canvas) {
         var imgData = canvas.toDataURL("image/png");
@@ -528,7 +548,7 @@ export default {
         })
         .catch(function(error) {
           if (error.response.status == 401) {
-           // me.displayNotification("error", "Su sesión ha expirado.");
+            // me.displayNotification("error", "Su sesión ha expirado.");
           } else {
             me.displayNotification("error", error.message);
           }

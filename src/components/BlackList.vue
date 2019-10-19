@@ -236,8 +236,9 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
+            item.ModifiedBy = this.$store.state.user.name;
             axios
-              .delete("api/BlackLists/DeleteBlackList/" + item.blackListKey)
+              .delete("api/BlackLists/DeleteBlackList/" , { data: item})
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);

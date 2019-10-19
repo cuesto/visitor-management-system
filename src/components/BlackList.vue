@@ -175,15 +175,7 @@ export default {
       ],
       search: "",
       editedIndex: -1,
-      blackListModel: {
-        blackListKey: 0,
-        name: "",
-        taxNumber: "",
-        startDate: "",
-        endDate: "",
-        comment: ""
-      },
-      blacklistmodels: new BlackListModel()
+      blackListModel: new BlackListModel()
     };
   },
   computed: {
@@ -200,8 +192,6 @@ export default {
   },
 
   created() {
-    
-    console.log(this.blacklistmodels);
     this.getBlacklists();
   },
   methods: {
@@ -222,8 +212,8 @@ export default {
           me.blacklists = response.data;
         })
         .catch(function(error) {
-          console.log(error);
-          me.displayNotification("error", error);
+          console.log(error.message);
+          me.displayNotification("error", error.message);
         });
     },
     editItem(item) {
@@ -262,7 +252,7 @@ export default {
                 }
               })
               .catch(function(error) {
-                me.displayNotification("error", error);
+                me.displayNotification("error", error.message);
               });
           }
         });
@@ -277,14 +267,7 @@ export default {
     },
 
     clean() {
-      this.blackListModel = {
-        blackListKey: 0,
-        name: "",
-        taxNumber: "",
-        startDate: "",
-        endDate: "",
-        comment: ""
-      };
+      this.blackListModel = new BlackListModel();
     },
 
     async save() {
@@ -308,7 +291,7 @@ export default {
               }
             })
             .catch(function(error) {
-              me.displayNotification("error", error);
+              me.displayNotification("error", error.message);
             });
         } else {
           let me = this;
@@ -329,7 +312,7 @@ export default {
               }
             })
             .catch(function(error) {
-              me.displayNotification("error", error);
+              me.displayNotification("error", error.message);
             });
         }
       }

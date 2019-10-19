@@ -107,6 +107,7 @@
 <script>
 import axios from "axios";
 import { mask } from "vue-the-mask";
+import UserModel from "../models/UserModel";
 
 export default {
   directives: {
@@ -133,16 +134,7 @@ export default {
       },
       search: "",
       editedIndex: -1,
-      userModel: {
-        userKey: 0,
-        name: "",
-        roleKey: 0,
-        email: "",
-        password: "",
-        isNewPassword: false,
-        password_hash: "",
-        password_salt: ""
-      },
+      userModel: new UserModel(),
       passwordAnt: ""
     };
   },
@@ -175,28 +167,24 @@ export default {
     },
     async getUsers() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/Users/GetUsers", conf)
+        .get("api/Users/GetUsers")
         .then(function(response) {
           me.users = response.data;
         })
         .catch(function(error) {
-          console.log(error);
+          console.log(error.message);
         });
     },
     async getRoles() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/Roles/GetRoles", conf)
+        .get("api/Roles/GetRoles")
         .then(function(response) {
           me.roles = response.data;
         })
         .catch(function(error) {
-          console.log(error);
+          console.log(error.message);
         });
     },
     editItem(item) {
@@ -221,10 +209,9 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
-            let header = { Authorization: "Bearer " + this.$store.state.token };
-            let conf = { headers: header };
+            item.ModifiedBy = this.$store.state.user.name;
             axios
-              .delete("api/Users/DeleteUser/" + item.userKey, conf)
+              .delete("api/Users/DeleteUser", { data: item })
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
@@ -239,7 +226,7 @@ export default {
                 }
               })
               .catch(function(error) {
-                me.displayNotification("error", error);
+                me.displayNotification("error", error.message);
               });
           }
         });
@@ -254,16 +241,7 @@ export default {
     },
 
     clean() {
-      this.userModel = {
-        userKey: 0,
-        name: "",
-        roleKey: 0,
-        email: "",
-        password: "",
-        isNewPassword: false,
-        password_hash: "",
-        password_salt: ""
-      };
+      this.userModel = new UserModel();
       this.passwordAnt = "";
     },
 
@@ -271,14 +249,12 @@ export default {
       if (this.$refs.form.validate()) {
         if (this.editedIndex > -1) {
           let me = this;
-          let header = { Authorization: "Bearer " + this.$store.state.token };
-          let conf = { headers: header };
           me.userModel.ModifiedBy = this.$store.state.user.name;
           if (me.userModel.password != me.passwordAnt) {
             me.userModel.isNewPassword = true;
           }
           await axios
-            .put("api/Users/PutUser", me.userModel, conf)
+            .put("api/Users/PutUser", me.userModel)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);
@@ -293,18 +269,16 @@ export default {
               }
             })
             .catch(function(error) {
-              me.displayNotification("error", error);
+              me.displayNotification("error", error.message);
             });
         } else {
           let me = this;
-          let header = { Authorization: "Bearer " + this.$store.state.token };
-          let conf = { headers: header };
           me.userModel.isNewPassword = true;
           me.userModel.password_hash = "";
           me.userModel.password_salt = "";
           me.userModel.CreatedBy = this.$store.state.user.name;
           await axios
-            .post("api/Users/PostUser", me.userModel, conf)
+            .post("api/Users/PostUser", me.userModel)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);
@@ -319,7 +293,7 @@ export default {
               }
             })
             .catch(function(error) {
-              me.displayNotification("error", error);
+              me.displayNotification("error", error.message);
             });
         }
       }

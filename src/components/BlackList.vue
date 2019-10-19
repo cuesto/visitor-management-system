@@ -149,6 +149,7 @@
 <script>
 import axios from "axios";
 import { mask } from "vue-the-mask";
+import BlackListModel from "../models/BlackListModel";
 
 export default {
   directives: {
@@ -181,7 +182,8 @@ export default {
         startDate: "",
         endDate: "",
         comment: ""
-      }
+      },
+      blacklistmodels: new BlackListModel()
     };
   },
   computed: {
@@ -198,6 +200,8 @@ export default {
   },
 
   created() {
+    
+    console.log(this.blacklistmodels);
     this.getBlacklists();
   },
   methods: {

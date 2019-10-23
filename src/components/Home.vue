@@ -30,13 +30,12 @@
             </v-col>
             <v-col cols="7">
               <v-card>
-                <v-data-table
+                <v-data-table               
                   :items-per-page="5"
                   :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
                   :headers="headersVisitors"
                   :search="searchVisitors"
                   :items="visitors"
-                  sort-by="visitorKey"
                   class="elevation-1"
                 >
                   <template v-slot:top>

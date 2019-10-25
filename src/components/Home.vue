@@ -463,7 +463,7 @@ export default {
     async getEmployeesRequest() {
       let me = this;
       await axios
-        .get("api/EmployeeRequests/GetEmployeeRequests")
+        .get("api/EmployeeRequests/GetEmployeeRequestsHome")
         .then(function(response) {
           me.employeesrequest = response.data;
         })

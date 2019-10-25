@@ -300,6 +300,7 @@
 import axios from "axios";
 import { mask } from "vue-the-mask";
 import Papa from "papaparse";
+import EmployeeRequestModel from "../models/EmployeeRequestModel";
 
 export default {
   directives: {
@@ -356,25 +357,7 @@ export default {
       },
       search: "",
       editedIndex: -1,
-      employeeRequestModel: {
-        employeeRequestKey: 0,
-        employeeKey: 0,
-        visitorName: "",
-        visitorEmail: "",
-        visitorPhone: "",
-        taxNumber: "",
-        company: "",
-        purposeKey: 0,
-        startDate: "",
-        startTime: null,
-        endDate: "",
-        endTime: null,
-        comments: "",
-        status: 0,
-        employeeName: "",
-        purposeDescription: "",
-        daysList: ""
-      }
+      employeeRequestModel: new EmployeeRequestModel()
     };
   },
   computed: {
@@ -449,23 +432,18 @@ export default {
               status: 0,
               employeeName: "",
               purposeDescription: "",
-              daysList: ""
+              daysList: "",
+              CreatedBy: me.$store.state.user.name
             };
           });
 
           employeeRequestList = employeeRequestList.filter(
             x => x.employeeKey != undefined
           );
-
-          console.log(employeeRequestList);
-
-          let header = { Authorization: "Bearer " + me.$store.state.token };
-          let conf = { headers: header };
           axios
             .post(
               "api/EmployeeRequests/PostEmployeeRequests",
-              employeeRequestList,
-              conf
+              employeeRequestList
             )
             .then(function(response) {
               if (response.data.result == "ERROR") {
@@ -481,7 +459,7 @@ export default {
               }
             })
             .catch(function(error) {
-              me.displayNotification("error", error);
+              me.displayNotification("error", error.message);
             });
         }
       });
@@ -513,54 +491,43 @@ export default {
     },
     async getEmployeeRequests() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/EmployeeRequests/GetEmployeeRequests", conf)
+        .get("api/EmployeeRequests/GetEmployeeRequests")
         .then(function(response) {
           me.employeerequest = response.data;
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
     async getEmployees() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/Employees/GetEmployees", conf)
+        .get("api/Employees/GetEmployees")
         .then(function(response) {
           me.employees = response.data;
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
     async getPurposes() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/Purposes/GetPurposes", conf)
+        .get("api/Purposes/GetPurposes")
         .then(function(response) {
           me.purposes = response.data;
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
 
     async verifyRNC() {
       let me = this;
       me.loadingRNCButton = true;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get(
-          "api/Services/VerifyRNC/" + me.employeeRequestModel.taxNumber,
-          conf
-        )
+        .get("api/Services/VerifyRNC/" + me.employeeRequestModel.taxNumber)
         .then(function(response) {
           me.employeeRequestModel.company = response.data.nombre;
           me.loadingRNCButton = false;
@@ -568,7 +535,7 @@ export default {
             me.displayNotification("error", "El RNC/Cédula es inválido.");
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
 
@@ -595,14 +562,11 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
-            let header = { Authorization: "Bearer " + this.$store.state.token };
-            let conf = { headers: header };
+            item.ModifiedBy = this.$store.state.user.name;
             axios
-              .delete(
-                "api/EmployeeRequests/DeleteEmployeeRequest/" +
-                  item.employeeRequestKey,
-                conf
-              )
+              .delete("api/EmployeeRequests/DeleteEmployeeRequest/", {
+                data: item
+              })
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
@@ -617,7 +581,7 @@ export default {
                 }
               })
               .catch(function(error) {
-                me.displayNotification("error", error);
+                me.displayNotification("error", error.message);
               });
           }
         });
@@ -634,25 +598,7 @@ export default {
     },
 
     clean() {
-      this.employeeRequestModel = {
-        employeeRequestKey: 0,
-        employeeKey: 0,
-        visitorName: "",
-        visitorEmail: "",
-        visitorPhone: "",
-        taxNumber: "",
-        company: "",
-        purposeKey: 0,
-        startDate: "",
-        startTime: null,
-        endDate: "",
-        endTime: null,
-        comments: "",
-        status: 0,
-        employeeName: "",
-        purposeDescription: "",
-        daysList: ""
-      };
+      this.employeeRequestModel = new EmployeeRequestModel();
     },
 
     cleanDays() {
@@ -684,14 +630,11 @@ export default {
       if (this.$refs.form.validate()) {
         if (this.editedIndex > -1) {
           let me = this;
-          let header = { Authorization: "Bearer " + this.$store.state.token };
-          let conf = { headers: header };
           me.employeeRequestModel.ModifiedBy = this.$store.state.user.name;
           await axios
             .put(
               "api/EmployeeRequests/PutEmployeeRequest",
-              me.employeeRequestModel,
-              conf
+              me.employeeRequestModel
             )
             .then(function(response) {
               if (response.data.result == "ERROR") {
@@ -708,12 +651,10 @@ export default {
               }
             })
             .catch(function(error) {
-              me.displayNotification("error", error);
+              me.displayNotification("error", error.message);
             });
         } else {
           let me = this;
-          let header = { Authorization: "Bearer " + this.$store.state.token };
-          let conf = { headers: header };
           me.employeeRequestModel.CreatedBy = this.$store.state.user.name;
           if (me.repeat) {
             me.setRepeatedDays();
@@ -721,8 +662,7 @@ export default {
           await axios
             .post(
               "api/EmployeeRequests/PostEmployeeRequest",
-              me.employeeRequestModel,
-              conf
+              me.employeeRequestModel
             )
             .then(function(response) {
               if (response.data.result == "ERROR") {
@@ -738,7 +678,7 @@ export default {
               }
             })
             .catch(function(error) {
-              me.displayNotification("error", error);
+              me.displayNotification("error", error.message);
             });
         }
       }

@@ -38,11 +38,7 @@
                   <v-text-field label="Correo" v-model="visitorModel.email"></v-text-field>
                 </v-flex>
                 <v-flex xs12 md4>
-                  <v-text-field
-                    label="Celular"
-                    v-mask="mask"
-                    v-model="visitorModel.phone"
-                  ></v-text-field>
+                  <v-text-field label="Celular" v-mask="mask" v-model="visitorModel.phone"></v-text-field>
                 </v-flex>
                 <v-flex xs12 md4>
                   <v-select
@@ -115,19 +111,7 @@
           </v-form>
         </v-card>
       </v-flex>
-      <v-flex xs12 md4>
-        <!-- <div class="text-center">
-          <v-avatar slot="offset" class="mx-auto d-block" size="130">
-            <img src="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg" />
-          </v-avatar>
-          <v-card-text class="text-xs-center">
-            <br />
-            <v-btn color="success" class="mx-auto d-block">
-              <v-icon left>cloud_upload</v-icon>Cargar Foto
-            </v-btn>
-          </v-card-text>
-        </div>-->
-      </v-flex>
+      <v-flex xs12 md4></v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -138,6 +122,7 @@ import { mask } from "vue-the-mask";
 import router from "../router";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import VisitorModel from "../models/VisitorModel";
 
 export default {
   directives: {
@@ -158,24 +143,7 @@ export default {
           return pattern.test(value) || "Correo Inválido.";
         }
       },
-      visitorModel: {
-        visitorKey: 0,
-        name: "",
-        taxNumberVisitor: "",
-        phone: "",
-        email: "",
-        company: "",
-        taxNumber: "",
-        gender: 0,
-        image: "",
-        purposeKey: 0,
-        comment: "",
-        employeeKey: 0,
-        startDate: new Date(),
-        endDate: new Date(),
-        employeeRequestKey: 0,
-        status: 1
-      },
+      visitorModel: new VisitorModel(),
       employees: [],
       purposes: [],
       gender: [
@@ -196,7 +164,6 @@ export default {
       handler: function(newValue) {
         if (newValue) {
           if (newValue) this.$refs.form.resetValidation();
-          // Utils.mapToObject(newValue, this.visitorModel);
         }
       }
     }
@@ -210,16 +177,14 @@ export default {
     },
     async getEmployeesRequest() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/EmployeeRequests/GetEmployeeRequest/" + this.id, conf)
+        .get("api/EmployeeRequests/GetEmployeeRequest/" + this.id)
         .then(function(response) {
           me.employeesrequest = response.data;
           me.setVisitorFromRequest();
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
 
@@ -246,38 +211,32 @@ export default {
     },
     async getEmployees() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/Employees/GetEmployees", conf)
+        .get("api/Employees/GetEmployees")
         .then(function(response) {
           me.employees = response.data;
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
     async getPurposes() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/Purposes/GetPurposes", conf)
+        .get("api/Purposes/GetPurposes")
         .then(function(response) {
           me.purposes = response.data;
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
 
     async verifyCedula(cedula) {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       me.loadingCedulaButton = true;
       await axios
-        .get("api/Services/VerifyRNC/" + cedula, conf)
+        .get("api/Services/VerifyRNC/" + cedula)
         .then(function(response) {
           me.visitorModel.name = response.data.nombre;
           me.loadingCedulaButton = false;
@@ -285,17 +244,15 @@ export default {
             me.displayNotification("error", "Cédula/RNC no es válida.");
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
 
     async verifyRNC(rnc) {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       me.loadingRNCButton = true;
       await axios
-        .get("api/Services/VerifyRNC/" + rnc, conf)
+        .get("api/Services/VerifyRNC/" + rnc)
         .then(function(response) {
           me.visitorModel.company = response.data.nombre;
           me.loadingRNCButton = false;
@@ -303,18 +260,16 @@ export default {
             me.displayNotification("error", "Cédula/RNC no es válida.");
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
 
     async save() {
       if (this.$refs.form.validate()) {
         let me = this;
-        let header = { Authorization: "Bearer " + this.$store.state.token };
-        let conf = { headers: header };
         me.visitorModel.CreatedBy = this.$store.state.user.name;
         await axios
-          .post("api/Visitors/PostVisitor", me.visitorModel, conf)
+          .post("api/Visitors/PostVisitor", me.visitorModel)
           .then(function(response) {
             if (response.data.result == "ERROR") {
               me.displayNotification("error", response.data.message);
@@ -331,7 +286,7 @@ export default {
             }
           })
           .catch(function(error) {
-            me.displayNotification("error", error);
+            me.displayNotification("error", error.message);
           });
       }
     },
@@ -339,15 +294,9 @@ export default {
     updateEmployeeRequest() {
       let me = this;
       me.employeesrequest.status = 1;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       me.employeesrequest.ModifiedBy = this.$store.state.user.name;
       axios
-        .put(
-          "api/EmployeeRequests/PutEmployeeRequest",
-          me.employeesrequest,
-          conf
-        )
+        .put("api/EmployeeRequests/PutEmployeeRequest", me.employeesrequest)
         .then(function(response) {
           if (response.data.result == "ERROR") {
             me.displayNotification("error", response.data.message);
@@ -356,29 +305,12 @@ export default {
           }
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
 
     clean() {
-      this.visitorModel = {
-        visitorKey: 0,
-        name: "",
-        taxNumberVisitor: "",
-        phone: "",
-        email: "",
-        company: "",
-        taxNumber: "",
-        gender: 0,
-        image: "",
-        purposeKey: 0,
-        comment: "",
-        employeeKey: 0,
-        startDate: new Date(),
-        endDate: new Date(),
-        employeeRequestKey: 0,
-        status: 1
-      };
+      this.visitorModel = new VisitorModel();
     }
   }
 };

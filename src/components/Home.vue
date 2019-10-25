@@ -365,25 +365,6 @@ export default {
       },
       { text: "Opciones", value: "options", sortable: false }
     ],
-    employeeRequestModel: {
-      employeeRequestKey: 0,
-      employeeKey: 0,
-      visitorName: "",
-      visitorEmail: "",
-      visitorPhone: "",
-      taxNumber: "",
-      company: "",
-      purposeKey: 0,
-      startDate: "",
-      startTime: null,
-      endDate: "",
-      endTime: null,
-      comments: "",
-      status: 0,
-      employeeName: "",
-      purposeDescription: "",
-      daysList: ""
-    },
     searchVisitors: "",
     visitors: [],
     headersVisitors: [

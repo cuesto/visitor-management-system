@@ -135,6 +135,7 @@
 <script>
 import axios from "axios";
 import { mask } from "vue-the-mask";
+import EmployeeModel from "../models/EmployeeModel";
 
 export default {
   directives: {
@@ -165,17 +166,7 @@ export default {
       },
       search: "",
       editedIndex: -1,
-      employeeModel: {
-        employeeKey: 0,
-        employeeId: "",
-        name: "",
-        departmentKey: 0,
-        officePhone: "",
-        officePhoneExt: "",
-        email: "",
-        mobilePhone: "",
-        comments: ""
-      }
+      employeeModel: new EmployeeModel()
     };
   },
   computed: {
@@ -207,28 +198,24 @@ export default {
     },
     async getEmployees() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/Employees/GetEmployees", conf)
+        .get("api/Employees/GetEmployees")
         .then(function(response) {
           me.employees = response.data;
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
     async getDepartments() {
       let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let conf = { headers: header };
       await axios
-        .get("api/Departments/GetDepartments", conf)
+        .get("api/Departments/GetDepartments")
         .then(function(response) {
           me.departments = response.data;
         })
         .catch(function(error) {
-          me.displayNotification("error", error);
+          me.displayNotification("error", error.message);
         });
     },
     editItem(item) {
@@ -251,10 +238,9 @@ export default {
         .then(result => {
           if (result.value) {
             let me = this;
-            let header = { Authorization: "Bearer " + this.$store.state.token };
-            let conf = { headers: header };
+            item.ModifiedBy = this.$store.state.user.name;
             axios
-              .delete("api/Employees/DeleteEmployee/" + item.employeeKey, conf)
+              .delete("api/Employees/DeleteEmployee/", { data: item })
               .then(function(response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
@@ -269,7 +255,7 @@ export default {
                 }
               })
               .catch(function(error) {
-                me.displayNotification("error", error);
+                me.displayNotification("error", error.message);
               });
           }
         });
@@ -284,28 +270,16 @@ export default {
     },
 
     clean() {
-      this.employeeModel = {
-        employeeKey: 0,
-        employeeId: "",
-        name: "",
-        departmentKey: 0,
-        officePhone: "",
-        officePhoneExt: "",
-        email: "",
-        mobilePhone: "",
-        comments: ""
-      };
+      this.employeeModel = new EmployeeModel();
     },
 
     async save() {
       if (this.$refs.form.validate()) {
         if (this.editedIndex > -1) {
           let me = this;
-          let header = { Authorization: "Bearer " + this.$store.state.token };
-          let conf = { headers: header };
           me.employeeModel.ModifiedBy = this.$store.state.user.name;
           await axios
-            .put("api/Employees/PutEmployee", me.employeeModel, conf)
+            .put("api/Employees/PutEmployee", me.employeeModel)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);
@@ -320,15 +294,13 @@ export default {
               }
             })
             .catch(function(error) {
-              me.displayNotification("error", error);
+              me.displayNotification("error", error.message);
             });
         } else {
           let me = this;
-          let header = { Authorization: "Bearer " + this.$store.state.token };
-          let conf = { headers: header };
           me.employeeModel.CreatedBy = this.$store.state.user.name;
           await axios
-            .post("api/Employees/PostEmployee", me.employeeModel, conf)
+            .post("api/Employees/PostEmployee", me.employeeModel)
             .then(function(response) {
               if (response.data.result == "ERROR") {
                 me.displayNotification("error", response.data.message);
@@ -343,7 +315,7 @@ export default {
               }
             })
             .catch(function(error) {
-              me.displayNotification("error", error);
+              me.displayNotification("error", error.message);
             });
         }
       }

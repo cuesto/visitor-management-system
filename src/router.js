@@ -7,6 +7,7 @@ import BlackList from "./components/BlackList";
 import User from "./components/User";
 import EmployeeRequest from "./components/EmployeeRequest";
 import Login from "./components/Login";
+import Report from "./components/Report";
 import store from "./store";
 
 Vue.use(Router);
@@ -80,6 +81,14 @@ var router = new Router({
       component: Login,
       meta: {
         free: true
+      }
+    },
+    {
+      path: "/reports",
+      name: "reports",
+      component: Report,
+      meta: {
+        administrator: true
       }
     }
   ]

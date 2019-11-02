@@ -44,6 +44,14 @@
             </v-list-item>
           </template>
           <template v-if="isAdmin">
+            <v-list-item :to="{name:'reports'}">
+              <v-list-item-action>
+                <v-icon>assessment</v-icon>
+              </v-list-item-action>
+              <v-list-item-title>Reportes</v-list-item-title>
+            </v-list-item>
+          </template>
+          <template v-if="isAdmin">
             <v-list-item :to="{name:'users'}">
               <v-list-item-action>
                 <v-icon>security</v-icon>

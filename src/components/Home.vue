@@ -6,7 +6,10 @@
           <v-row cols="6">
             <v-col cols="5">
               <v-card>
-                <v-data-table
+                <!-- <div ref="chartdivpie" style="width: 100%; height: 400px;"></div> -->
+                <div ref="chartdivxy" style="width: 100%; height: 400px;"></div>
+
+                <!-- <v-data-table
                   :items-per-page="5"
                   :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
                   :headers="headersVisitorsByPurpose"
@@ -25,7 +28,7 @@
                       <v-icon left dark>autorenew</v-icon>Refrescar
                     </v-btn>
                   </template>
-                </v-data-table>
+                </v-data-table>-->
               </v-card>
             </v-col>
             <v-col cols="7">
@@ -153,6 +156,13 @@ import html2canvas from "html2canvas";
 import TicketModel from "../models/TicketModel";
 import Ticket from "../components/Ticket";
 
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4charts from "@amcharts/amcharts4/charts";
+
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+
+am4core.useTheme(am4themes_animated);
+
 export default {
   components: {
     Ticket
@@ -204,11 +214,12 @@ export default {
     },
     ticketModel: new TicketModel()
   }),
-  created() {
+  mounted() {
     this.getEmployeesRequest();
     this.getVisitors();
     this.getVisitorsByPurpose();
   },
+
   methods: {
     showTicketModal(item) {
       this.label.name = item.name;
@@ -332,12 +343,14 @@ export default {
         });
     },
 
-    async getVisitorsByPurpose() {
+    getVisitorsByPurpose() {
       let me = this;
-      await axios
+      axios
         .get("api/Purposes/GetVisitorsPurpose")
         .then(function(response) {
           me.visitorsByPurpose = response.data;
+          //me.displayPieChart();
+          me.displayXYChart();
         })
         .catch(function(error) {
           if (error.response.status == 401) {
@@ -346,6 +359,48 @@ export default {
             me.displayNotification("error", error.message);
           }
         });
+    },
+    displayPieChart() {
+      let chart = am4core.create(this.$refs.chartdivpie, am4charts.PieChart);
+      chart.data = this.visitorsByPurpose;
+
+      // Add and configure Series
+      var pieSeries = chart.series.push(new am4charts.PieSeries());
+
+      pieSeries.dataFields.value = "value";
+      pieSeries.dataFields.category = "description";
+      chart.innerRadius = am4core.percent(40);
+
+      // Disable ticks and labels
+      pieSeries.labels.template.disabled = true;
+      pieSeries.ticks.template.disabled = true;
+
+      // chart.legend = new am4charts.Legend();
+      // chart.legend.position = "botton";
+    },
+
+    displayXYChart() {
+      var chart = am4core.create(this.$refs.chartdivxy, am4charts.XYChart);
+
+      // Add data
+     chart.data = this.visitorsByPurpose;
+
+      // Create axes
+      let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+      categoryAxis.dataFields.category = "description";
+      categoryAxis.title.text = "Tipos de Visitas";
+
+      let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+      valueAxis.title.text = "Cantidad";
+
+      // Create series
+      var series = chart.series.push(new am4charts.ColumnSeries());
+      series.dataFields.valueY = "value";
+      series.dataFields.categoryX = "description";
+      //series.name = "Sales";
+      series.columns.template.tooltipText =
+        "Tipo: {categoryX}\nCantidad: {valueY}";
+      series.columns.template.fill = am4core.color("#488fef");
     }
   }
 };

@@ -1,9 +1,4 @@
 <template>
-  <!-- <v-card>
-    <v-card-text>
-      <v-btn @click="printPDF()">
-        <v-icon>print</v-icon>
-  </v-btn>-->
   <div id="ticket">
     <table border="0" cellpadding="0" cellspacing="0" width="100%">
       <tr valign="top">
@@ -197,9 +192,6 @@
       </tr>
     </table>
   </div>
-  <!-- <v-btn @click="hideTicketModal()" color="blue darken-1" text>Cancelar</v-btn>
-    </v-card-text>
-  </v-card>-->
 </template>
 
 <script>

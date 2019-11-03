@@ -6,29 +6,7 @@
           <v-row cols="6">
             <v-col cols="5">
               <v-card>
-                <!-- <div ref="chartdivpie" style="width: 100%; height: 400px;"></div> -->
                 <div ref="chartdivxy" style="width: 100%; height: 400px;"></div>
-
-                <!-- <v-data-table
-                  :items-per-page="5"
-                  :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
-                  :headers="headersVisitorsByPurpose"
-                  :items="visitorsByPurpose"
-                  class="elevation-1"
-                >
-                  <template v-slot:top>
-                    <v-toolbar flat color="#03a9f4">
-                      <v-toolbar-title>Propósito de Visitas</v-toolbar-title>
-                      <v-divider class="mx-4" inset vertical></v-divider>
-                      <v-spacer></v-spacer>
-                    </v-toolbar>
-                  </template>
-                  <template v-slot:no-data>
-                    <v-btn color="primary" @click="getVisitorsByPurpose">
-                      <v-icon left dark>autorenew</v-icon>Refrescar
-                    </v-btn>
-                  </template>
-                </v-data-table>-->
               </v-card>
             </v-col>
             <v-col cols="7">
@@ -349,7 +327,6 @@ export default {
         .get("api/Purposes/GetVisitorsPurpose")
         .then(function(response) {
           me.visitorsByPurpose = response.data;
-          //me.displayPieChart();
           me.displayXYChart();
         })
         .catch(function(error) {
@@ -360,30 +337,19 @@ export default {
           }
         });
     },
-    displayPieChart() {
-      let chart = am4core.create(this.$refs.chartdivpie, am4charts.PieChart);
-      chart.data = this.visitorsByPurpose;
-
-      // Add and configure Series
-      var pieSeries = chart.series.push(new am4charts.PieSeries());
-
-      pieSeries.dataFields.value = "value";
-      pieSeries.dataFields.category = "description";
-      chart.innerRadius = am4core.percent(40);
-
-      // Disable ticks and labels
-      pieSeries.labels.template.disabled = true;
-      pieSeries.ticks.template.disabled = true;
-
-      // chart.legend = new am4charts.Legend();
-      // chart.legend.position = "botton";
-    },
-
     displayXYChart() {
       var chart = am4core.create(this.$refs.chartdivxy, am4charts.XYChart);
 
+     let data = this.visitorsByPurpose.map(x => {
+        return {
+          short_desc:x.description.substring(0, 4)+'.',
+          description: x.description,
+          value: x.value
+        };
+      });
+
       // Add data
-     chart.data = this.visitorsByPurpose;
+      chart.data = data;
 
       // Create axes
       let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());

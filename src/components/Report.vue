@@ -61,7 +61,7 @@
                     </v-menu>
                     <v-tooltip class="pad" v-model="showTooltipSearch" top>
                       <template v-slot:activator="{ on }">
-                        <v-btn color="success" v-on="on" @click="console.log()">
+                        <v-btn color="success" v-on="on" @click="getData">
                           <v-icon left>search</v-icon>Buscar
                         </v-btn>
                       </template>
@@ -96,25 +96,15 @@
                         single-line
                         hide-details
                       ></v-text-field>
-                      <v-tooltip class="pad" v-model="showTooltipExport" top>
+                      <!-- <v-tooltip class="pad" v-model="showTooltipExport" top>
                         <template v-slot:activator="{ on }">
                           <v-btn color="info" v-on="on" @click="console.log()">
                             <v-icon left>cloud_download</v-icon>Descargar
                           </v-btn>
                         </template>
                         <span>Descargar Registros en formato de Excel</span>
-                      </v-tooltip>
+                      </v-tooltip>-->
                     </v-toolbar>
-                  </template>
-                  <template v-slot:item.options="{ item }">
-                    <v-icon size="sm" class="mr-1" @click="showTicketModal(item)">print</v-icon>
-                    <v-icon
-                      size="sm"
-                      variant="outline-info"
-                      color="red"
-                      class="mr-1"
-                      @click="checkOut(item)"
-                    >call_made</v-icon>
                   </template>
                   <template v-slot:no-data>
                     <v-btn color="primary" @click="getVisitors">
@@ -125,13 +115,13 @@
               </v-card>
             </v-col>
           </v-row>
-          <v-row cols="6">
+          <!-- <v-row cols="6">
             <v-col cols="12">
               <v-card>
                 <div ref="chartdivpie" style="width: 100%; height: 400px;"></div>
               </v-card>
             </v-col>
-          </v-row>
+          </v-row>-->
           <v-row cols="6">
             <v-col cols="12">
               <v-card>
@@ -164,6 +154,7 @@ export default {
       showTooltipExport: false,
       searchVisitors: "",
       visitors: [],
+      visitorsByDate: [],
       headersVisitors: [
         { text: "Nombre", sortable: true, value: "name" },
         { text: "Celular", sortable: true, value: "phone" },
@@ -171,21 +162,26 @@ export default {
           text: "Empleado(Quién lo recibió)",
           sortable: true,
           value: "employeeName"
-        },
-        { text: "Opciones", value: "options", sortable: false }
+        }
       ]
     };
   },
   mounted() {
-    this.displayChart();
-    this.getVisitorsByPurpose();
-    this.getVisitors();
+    //this.displayChart();
+    //this.getVisitorsByPurpose();
+    //this.getVisitors();
   },
   methods: {
+    getData() {
+      this.getVisitors();
+      this.getVisitorsSummaryByDate();
+      
+    },
+
     async getVisitors() {
       let me = this;
       await axios
-        .get("api/Visitors/GetVisitors")
+        .get("api/Visitors/GetVisitors/" + this.startDate + "/" + this.endDate)
         .then(function(response) {
           me.visitors = response.data;
         })
@@ -197,58 +193,80 @@ export default {
           }
         });
     },
-    async getVisitorsByPurpose() {
+    async getVisitorsSummaryByDate() {
       let me = this;
       await axios
-        .get("api/Purposes/GetVisitorsPurpose")
+        .get(
+          "api/Visitors/GetVisitorsSummaryByDate/" +
+            this.startDate +
+            "/" +
+            this.endDate
+        )
         .then(function(response) {
-          me.visitorsByPurpose = response.data;
-          me.displayPieChart();
+          me.visitorsByDate = response.data;
+          //console.log(me.visitorsByDate);
+          me.displayChart();
         })
         .catch(function(error) {
           if (error.response.status == 401) {
-            // me.displayNotification("error", "Su sesión ha expirado.");
+            //me.displayNotification("error", "Su sesión ha expirado.");
           } else {
             me.displayNotification("error", error.message);
           }
         });
     },
-    displayPieChart() {
-      let chart = am4core.create(this.$refs.chartdivpie, am4charts.PieChart);
-      chart.data = this.visitorsByPurpose;
+    // async getVisitorsByPurpose() {
+    //   let me = this;
+    //   await axios
+    //     .get("api/Purposes/GetVisitorsPurpose")
+    //     .then(function(response) {
+    //       me.visitorsByPurpose = response.data;
+    //       me.displayPieChart();
+    //     })
+    //     .catch(function(error) {
+    //       if (error.response.status == 401) {
+    //         // me.displayNotification("error", "Su sesión ha expirado.");
+    //       } else {
+    //         me.displayNotification("error", error.message);
+    //       }
+    //     });
+    // },
+    // displayPieChart() {
+    //   let chart = am4core.create(this.$refs.chartdivpie, am4charts.PieChart);
+    //   chart.data = this.visitorsByPurpose;
 
-      // Add and configure Series
-      var pieSeries = chart.series.push(new am4charts.PieSeries());
+    //   // Add and configure Series
+    //   var pieSeries = chart.series.push(new am4charts.PieSeries());
 
-      pieSeries.dataFields.value = "value";
-      pieSeries.dataFields.category = "description";
-      chart.innerRadius = am4core.percent(40);
+    //   pieSeries.dataFields.value = "value";
+    //   pieSeries.dataFields.category = "description";
+    //   chart.innerRadius = am4core.percent(40);
 
-      // Disable ticks and labels
-      pieSeries.labels.template.disabled = true;
-      pieSeries.ticks.template.disabled = true;
+    //   // Disable ticks and labels
+    //   pieSeries.labels.template.disabled = true;
+    //   pieSeries.ticks.template.disabled = true;
 
-      chart.legend = new am4charts.Legend();
-      chart.legend.position = "left";
-    },
+    //   chart.legend = new am4charts.Legend();
+    //   chart.legend.position = "left";
+    // },
     displayChart() {
       let chart = am4core.create(this.$refs.chartdivxychart, am4charts.XYChart);
 
       chart.paddingRight = 20;
 
-      let data = [];
-      let visits = 10;
-      for (let i = 1; i < 366; i++) {
-        visits = i;
-        data.push({
-          date: new Date(2019, 0, i),
-          name: "name" + i,
-          value: visits
-        });
-      }
+      // let data = [];
+      // let visits = 10;
+      // for (let i = 1; i < 366; i++) {
+      //   visits = i;
+      //   data.push({
+      //     date: new Date(2019, 0, i),
+      //     //name: "name" + i,
+      //     value: visits
+      //   });
+      // }
 
-      chart.data = data;
-
+      chart.data = this.visitorsByDate;
+      console.log(this.visitorsByDate);
       let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
       dateAxis.renderer.grid.template.location = 0;
 

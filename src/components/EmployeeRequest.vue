@@ -440,6 +440,13 @@ export default {
           employeeRequestList = employeeRequestList.filter(
             x => x.employeeKey != undefined
           );
+
+          console.log(employeeRequestList);
+          if (employeeRequestList.length == 0) {
+            me.displayNotification("error", "No se pudo procesar el archivo, revise el formato.");
+            return;
+          }
+
           axios
             .post(
               "api/EmployeeRequests/PostEmployeeRequests",

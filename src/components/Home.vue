@@ -265,13 +265,13 @@ export default {
         .then(function(response) {
           me.visitors = response.data;
         })
-        .catch(function(error) {
-          if (error.response.status == 401) {
-            //me.displayNotification("error", "Su sesión ha expirado.");
-          } else {
-            me.displayNotification("error", error.message);
-          }
-        });
+        // .catch(function(error) {
+        //   if (error.response.status == 401) {
+        //     //me.displayNotification("error", "Su sesión ha expirado.");
+        //   } else {
+        //     me.displayNotification("error", error.message);
+        //   }
+        // });
     },
 
     checkIn(item) {

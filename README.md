@@ -30,6 +30,12 @@ docker run -it -p 53745:80 --rm --name vms-front-app vms-front
 ```
 http://192.168.99.101:53745/
 ```
+```
+docker save -o prod-vms-front.tar vms-front
+```
+```
+docker load -i prod-vms-front.tar
+```
 
 
 ### Lints and fixes files

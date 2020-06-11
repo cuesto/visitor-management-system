@@ -25,8 +25,12 @@ npm run test
 docker build -t vms-front .
 ```
 ```
-docker run -it -p 8080:80 --rm --name vms-front-app vms-front
+docker run -it -p 53745:80 --rm --name vms-front-app vms-front
 ```
+```
+http://192.168.99.101:53745/
+```
+
 
 ### Lints and fixes files
 ```

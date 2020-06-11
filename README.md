@@ -40,3 +40,5 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/)
 
+# Resource
+https://es.vuejs.org/v2/cookbook/dockerize-vuejs-app.html

@@ -20,6 +20,14 @@ npm run build
 npm run test
 ```
 
+# Docker commands
+```
+docker build -t vms-front .
+```
+```
+docker run -it -p 8080:80 --rm --name vms-front-app vms-front
+```
+
 ### Lints and fixes files
 ```
 npm run lint
@@ -27,3 +35,4 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/)
+

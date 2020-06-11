@@ -10,8 +10,8 @@ Vue.config.productionTip = false;
 
 //axios.defaults.baseURL = "http://localhost:53280/"; //dev
 //axios.defaults.baseURL = 'https://vmsweb20191012024111.azurewebsites.net/'; //publish dev
-axios.defaults.baseURL = 'http://192.168.1.8:53280'; //prod.
-//axios.defaults.baseURL = 'http://192.168.99.101:5000'; //prod.
+//axios.defaults.baseURL = 'http://192.168.1.8:53280'; //prod.
+axios.defaults.baseURL = "http://192.168.99.101:53835/"; //dev Docker
 
 
 axios.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("token");

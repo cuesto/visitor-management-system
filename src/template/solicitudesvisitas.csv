@@ -1,0 +1,4 @@
+TarjetaEmpleado,Visitante,Email,Telefono,RNCVisitante,Empresa,Proposito,Comentarios,FechaInicio,FechaFin,HoraInicio,HoraFin
+10001,Jhon,jhon@test.com,(809)-545-2222,131699871,Farmax,Negocios,Es una visita de dia completo,2021-02-15,2021-02-15,8:00:00,16:00:00
+914,Pedro,luis@gmail.com,(809)-656-5545,131699871,Claro,Mantenimiento,Traera su laptop,2021-02-15,2021-02-15,8:31:00,17:00:00
+501,Katherine,k@gmail.com,(809)-656-5545,131699871,Infosocial,Negocios,Traera su laptop,2021-02-15,2021-02-16,8:31:00,17:00:00

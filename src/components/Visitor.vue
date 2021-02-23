@@ -268,6 +268,7 @@ export default {
       if (this.$refs.form.validate()) {
         let me = this;
         me.visitorModel.CreatedBy = this.$store.state.user.name;
+        me.visitorModel.Created = new Date();
         await axios
           .post("api/Visitors/PostVisitor", me.visitorModel)
           .then(function(response) {
@@ -277,6 +278,7 @@ export default {
               if (me.visitorModel.employeeRequestKey > 0) {
                 me.updateEmployeeRequest();
               }
+              me.sendSMS(response.data.visitorKey);
               me.clean();
               me.displayNotification(
                 "success",
@@ -289,6 +291,23 @@ export default {
             me.displayNotification("error", error.message);
           });
       }
+    },
+
+    sendSMS(visitorKey){
+      let me = this;
+      console.log(visitorKey)
+      axios
+        .post("api/Visitors/SendSMS/"+visitorKey)
+        .then(function(response) {
+          if (response.data.result == "ERROR") {
+            me.displayNotification("error", response.data.message);
+          } else {
+            console.log("SMS Sent");
+          }
+        })
+        .catch(function(error) {
+          me.displayNotification("error", error.message);
+        });
     },
 
     updateEmployeeRequest() {

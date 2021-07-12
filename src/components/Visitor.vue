@@ -278,7 +278,7 @@ export default {
               if (me.visitorModel.employeeRequestKey > 0) {
                 me.updateEmployeeRequest();
               }
-              me.sendSMS(response.data.visitorKey);
+              //me.sendSMS(response.data.visitorKey);
               me.clean();
               me.displayNotification(
                 "success",

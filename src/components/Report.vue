@@ -73,8 +73,17 @@
                       </template>
                       <span>Buscar Registros</span>
                     </v-tooltip>
-                    <v-btn color="info" v-on="on" @click="getData">
-                      <v-icon left>file-download</v-icon>Descargar
+                    <v-btn color="info" >
+                      <v-icon left>file_download</v-icon>
+                      <vue-excel-xlsx
+                        :data="visitors"
+                        :columns="headersExcel"
+                        :file-name="'Reporte de Visitas_'+startDate+'_'+endDate"
+                        :file-type="'xlsx'"
+                        :sheet-name="'visitas'"
+                      >
+                        Descargar
+                      </vue-excel-xlsx>
                     </v-btn>
                   </v-layout>
                 </v-toolbar>
@@ -166,6 +175,19 @@ export default {
       searchVisitors: "",
       visitors: [],
       visitorsByDate: [],
+      headersExcel: [
+        { label: "Nombre", field: "name" },
+        { label: "Cédula Visitante", field: "taxNumberVisitor" },
+        { label: "Celular", field: "phone" },
+        { label: "Compañía", field: "company" },
+        { label: "Propósito", field: "purposeDisplay" },
+        { label: "Empleado(Quién lo recibió)", field: "employeeName" },
+        { label: "Comentario", field: "comment" },
+        { label: "Fecha Inicio", field: "startDate" },
+        { label: "Hora Inicio", field: "startTime" },
+        { label: "Fecha Fin", field: "endDate" },
+        { label: "Hora Fin", field: "endTime" },
+      ],
       headersVisitors: [
         { text: "Nombre", sortable: true, value: "name" },
         { text: "Cédula Visitante", sortable: true, value: "taxNumberVisitor" },
@@ -202,7 +224,6 @@ export default {
         .get("api/Visitors/GetVisitors/" + this.startDate + "/" + this.endDate)
         .then(function (response) {
           me.visitors = response.data;
-          console.log(me.visitors);
         })
         .catch(function (error) {
           if (error.response.status == 401) {
@@ -285,7 +306,6 @@ export default {
       // }
 
       chart.data = this.visitorsByDate;
-      console.log(this.visitorsByDate);
       let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
       dateAxis.renderer.grid.template.location = 0;
 

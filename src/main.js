@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import axios from "axios";
+import VueExcelXlsx from "vue-excel-xlsx";
 import VueSweetalert2 from "vue-sweetalert2";
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 // If you don't need the styles, do not connect
@@ -33,7 +34,7 @@ axios.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getIte
 
 //   }
 // );
-
+Vue.use(VueExcelXlsx);
 Vue.use(VueSweetalert2);
 
 new Vue({

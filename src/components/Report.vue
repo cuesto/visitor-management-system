@@ -33,7 +33,10 @@
                           v-on="on"
                         ></v-text-field>
                       </template>
-                      <v-date-picker v-model="startDate" @input="menuStartDate = false"></v-date-picker>
+                      <v-date-picker
+                        v-model="startDate"
+                        @input="menuStartDate = false"
+                      ></v-date-picker>
                     </v-menu>
 
                     <v-menu
@@ -57,7 +60,10 @@
                           v-on="on"
                         ></v-text-field>
                       </template>
-                      <v-date-picker v-model="endDate" @input="menuEndDate = false"></v-date-picker>
+                      <v-date-picker
+                        v-model="endDate"
+                        @input="menuEndDate = false"
+                      ></v-date-picker>
                     </v-menu>
                     <v-tooltip class="pad" v-model="showTooltipSearch" top>
                       <template v-slot:activator="{ on }">
@@ -67,6 +73,9 @@
                       </template>
                       <span>Buscar Registros</span>
                     </v-tooltip>
+                    <v-btn color="info" v-on="on" @click="getData">
+                      <v-icon left>file-download</v-icon>Descargar
+                    </v-btn>
                   </v-layout>
                 </v-toolbar>
               </v-card>
@@ -77,7 +86,9 @@
               <v-card>
                 <v-data-table
                   :items-per-page="10"
-                  :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
+                  :footer-props="{
+                    'items-per-page-options': [5, 10, 15, 20, 25],
+                  }"
                   :headers="headersVisitors"
                   :search="searchVisitors"
                   :items="visitors"
@@ -147,9 +158,9 @@ export default {
   data() {
     return {
       menuStartDate: false,
-      startDate: "",
+      startDate: "2019-01-01",
       menuEndDate: false,
-      endDate: "",
+      endDate: "2023-01-01",
       showTooltipSearch: false,
       showTooltipExport: false,
       searchVisitors: "",
@@ -157,13 +168,21 @@ export default {
       visitorsByDate: [],
       headersVisitors: [
         { text: "Nombre", sortable: true, value: "name" },
+        { text: "Cédula Visitante", sortable: true, value: "taxNumberVisitor" },
         { text: "Celular", sortable: true, value: "phone" },
+        { text: "Compañía", sortable: true, value: "company" },
+        { text: "Propósito", sortable: true, value: "purposeDisplay" },
         {
           text: "Empleado(Quién lo recibió)",
           sortable: true,
-          value: "employeeName"
-        }
-      ]
+          value: "employeeName",
+        },
+        { text: "Comentario", sortable: true, value: "comment" },
+        { text: "Fecha Inicio", sortable: true, value: "startDate" },
+        { text: "Hora Inicio", sortable: true, value: "startTime" },
+        { text: "Fecha Fin", sortable: true, value: "endDate" },
+        { text: "Hora Fin", sortable: true, value: "endTime" },
+      ],
     };
   },
   mounted() {
@@ -175,17 +194,17 @@ export default {
     getData() {
       this.getVisitors();
       this.getVisitorsSummaryByDate();
-      
     },
 
     async getVisitors() {
       let me = this;
       await axios
         .get("api/Visitors/GetVisitors/" + this.startDate + "/" + this.endDate)
-        .then(function(response) {
+        .then(function (response) {
           me.visitors = response.data;
+          console.log(me.visitors);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           if (error.response.status == 401) {
             //me.displayNotification("error", "Su sesión ha expirado.");
           } else {
@@ -202,12 +221,12 @@ export default {
             "/" +
             this.endDate
         )
-        .then(function(response) {
+        .then(function (response) {
           me.visitorsByDate = response.data;
           //console.log(me.visitorsByDate);
           me.displayChart();
         })
-        .catch(function(error) {
+        .catch(function (error) {
           if (error.response.status == 401) {
             //me.displayNotification("error", "Su sesión ha expirado.");
           } else {
@@ -286,8 +305,8 @@ export default {
       chart.scrollbarX = scrollbarX;
 
       this.chart = chart;
-    }
-  }
+    },
+  },
 };
 </script>
 

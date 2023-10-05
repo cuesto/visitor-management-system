@@ -83,11 +83,12 @@
         </v-slide-y-transition>
       </v-container>
     </v-content>
+    
     <v-footer blue height="auto">
       <v-layout justify-center>
         <v-flex text-xs-center>
           <v-card flat tile color="primary" class="white--text">
-            <v-card-text class="white--text pt-0">InfoSocial &copy;2021</v-card-text>
+            <v-card-text class="white--text pt-0">InfoSocial &copy;{{year}}</v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
@@ -109,7 +110,8 @@ export default {
   name: "App",
   data: () => ({
     //
-    drawer: null
+    drawer: null,
+    year: new Date().getFullYear()
   }),
   computed: {
     logged() {

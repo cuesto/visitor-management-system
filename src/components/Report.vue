@@ -5,6 +5,7 @@
         <v-container>
           <v-row cols="6">
             <v-col cols="12">
+              //create an space beetwen the buttons
               <v-card>
                 <v-toolbar floating>
                   <v-toolbar-title>Reporte de Visitas</v-toolbar-title>
@@ -72,7 +73,8 @@
                         </v-btn>
                       </template>
                       <span>Buscar Registros</span>
-                    </v-tooltip>
+                    </v-tooltip>                        
+                    <v-spacer></v-spacer>
                     <v-btn color="info" >
                       <v-icon left>file_download</v-icon>
                       <vue-excel-xlsx

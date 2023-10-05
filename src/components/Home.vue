@@ -6,14 +6,16 @@
           <v-row cols="6">
             <v-col cols="5">
               <v-card>
-                <div ref="chartdivxy" style="width: 100%; height: 400px;"></div>
+                <div ref="chartdivxy" style="width: 100%; height: 400px"></div>
               </v-card>
             </v-col>
             <v-col cols="7">
               <v-card>
                 <v-data-table
                   :items-per-page="5"
-                  :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
+                  :footer-props="{
+                    'items-per-page-options': [5, 10, 15, 20, 25],
+                  }"
                   :headers="headersVisitors"
                   :search="searchVisitors"
                   :items="visitors"
@@ -35,14 +37,20 @@
                     </v-toolbar>
                   </template>
                   <template v-slot:item.options="{ item }">
-                    <v-icon size="sm" class="mr-1" @click="showTicketModal(item)">print</v-icon>
+                    <v-icon
+                      size="sm"
+                      class="mr-1"
+                      @click="showTicketModal(item)"
+                      >print</v-icon
+                    >
                     <v-icon
                       size="sm"
                       variant="outline-info"
                       color="red"
                       class="mr-1"
                       @click="checkOut(item)"
-                    >call_made</v-icon>
+                      >call_made</v-icon
+                    >
                   </template>
                   <template v-slot:no-data>
                     <v-btn color="primary" @click="getVisitors">
@@ -59,7 +67,9 @@
               <v-card>
                 <v-data-table
                   :items-per-page="5"
-                  :footer-props="{'items-per-page-options': [5, 10, 15, 20, 25]  }"
+                  :footer-props="{
+                    'items-per-page-options': [5, 10, 15, 20, 25],
+                  }"
                   :headers="headersEmployeeRequest"
                   :search="searchEmployeesRequest"
                   :items="employeesrequest"
@@ -88,7 +98,8 @@
                       color="blue"
                       class="mr-1"
                       @click="checkIn(item)"
-                    >done_outline</v-icon>
+                      >done_outline</v-icon
+                    >
                   </template>
                   <template v-slot:no-data>
                     <v-btn color="primary" @click="getEmployeesRequest">
@@ -114,7 +125,9 @@
                   :department="label.department"
                   :startdate="label.startdate"
                 />
-                <v-btn @click="hideTicketModal()" color="blue darken-1" text>Cancelar</v-btn>
+                <v-btn @click="hideTicketModal()" color="blue darken-1" text
+                  >Cancelar</v-btn
+                >
               </v-card-text>
             </v-card>
           </v-dialog>
@@ -143,7 +156,7 @@ am4core.useTheme(am4themes_animated);
 
 export default {
   components: {
-    Ticket
+    Ticket,
   },
   data: () => ({
     ticketModal: false,
@@ -160,9 +173,9 @@ export default {
       {
         text: "Empleado(Quién lo recibirá)",
         sortable: true,
-        value: "employeeName"
+        value: "employeeName",
       },
-      { text: "Opciones", value: "options", sortable: false }
+      { text: "Opciones", value: "options", sortable: false },
     ],
     searchVisitors: "",
     visitors: [],
@@ -172,14 +185,14 @@ export default {
       {
         text: "Empleado(Quién lo recibió)",
         sortable: true,
-        value: "employeeName"
+        value: "employeeName",
       },
-      { text: "Opciones", value: "options", sortable: false }
+      { text: "Opciones", value: "options", sortable: false },
     ],
     visitorsByPurpose: [],
     headersVisitorsByPurpose: [
       { text: "Tipo visita", sortable: false, value: "description" },
-      { text: "Cantidad", sortable: false, value: "value" }
+      { text: "Cantidad", sortable: false, value: "value" },
     ],
     label: {
       name: "",
@@ -188,9 +201,9 @@ export default {
       purpose: "",
       employee: "",
       department: "",
-      startdate: ""
+      startdate: "",
     },
-    ticketModel: new TicketModel()
+    ticketModel: new TicketModel(),
   }),
   mounted() {
     this.getEmployeesRequest();
@@ -220,7 +233,7 @@ export default {
 
     printPDF(item) {
       var quotes = document.getElementById("ticket");
-      html2canvas(quotes).then(function(canvas) {
+      html2canvas(quotes).then(function (canvas) {
         var imgData = canvas.toDataURL("image/png");
         var imgWidth = 210;
         var pageHeight = 295;
@@ -230,7 +243,10 @@ export default {
         var position = 0;
 
         doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        doc.save("ticket.pdf");
+        //generate file name based on date and time
+        var fileName = "ticket" + new Date().toLocaleString() + ".pdf";
+        doc.autoPrint();
+        doc.save(fileName);
       });
     },
 
@@ -240,17 +256,17 @@ export default {
         type: type,
         title: message,
         showConfirmButton: false,
-        timer: 2500
+        timer: 2500,
       });
     },
     async getEmployeesRequest() {
       let me = this;
       await axios
         .get("api/EmployeeRequests/GetEmployeeRequestsHome")
-        .then(function(response) {
+        .then(function (response) {
           me.employeesrequest = response.data;
         })
-        .catch(function(error) {
+        .catch(function (error) {
           if (error.response.status == 401) {
             //me.displayNotification("error", "Su sesión ha expirado.");
           } else {
@@ -260,24 +276,22 @@ export default {
     },
     async getVisitors() {
       let me = this;
-      await axios
-        .get("api/Visitors/GetVisitors")
-        .then(function(response) {
-          me.visitors = response.data;
-        })
-        // .catch(function(error) {
-        //   if (error.response.status == 401) {
-        //     //me.displayNotification("error", "Su sesión ha expirado.");
-        //   } else {
-        //     me.displayNotification("error", error.message);
-        //   }
-        // });
+      await axios.get("api/Visitors/GetVisitors").then(function (response) {
+        me.visitors = response.data;
+      });
+      // .catch(function(error) {
+      //   if (error.response.status == 401) {
+      //     //me.displayNotification("error", "Su sesión ha expirado.");
+      //   } else {
+      //     me.displayNotification("error", error.message);
+      //   }
+      // });
     },
 
     checkIn(item) {
       router.push({
         name: "visitorId",
-        params: { id: item.employeeRequestKey }
+        params: { id: item.employeeRequestKey },
       });
     },
 
@@ -290,16 +304,16 @@ export default {
           showCancelButton: true,
           confirmButtonColor: "#d33",
           confirmButtonText: "¡Si!",
-          cancelButtonText: "Cancelar"
+          cancelButtonText: "Cancelar",
         })
-        .then(result => {
+        .then((result) => {
           if (result.value) {
             let me = this;
             item.status = 2;
             item.ModifiedBy = this.$store.state.user.name;
             axios
               .put("api/Visitors/PutVisitor", item)
-              .then(function(response) {
+              .then(function (response) {
                 if (response.data.result == "ERROR") {
                   me.displayNotification("error", response.data.message);
                 } else {
@@ -310,7 +324,7 @@ export default {
                   );
                 }
               })
-              .catch(function(error) {
+              .catch(function (error) {
                 if (error.response.status == 401) {
                   //me.displayNotification("error", "Su sesión ha expirado.");
                 } else {
@@ -325,11 +339,11 @@ export default {
       let me = this;
       axios
         .get("api/Purposes/GetVisitorsPurpose")
-        .then(function(response) {
+        .then(function (response) {
           me.visitorsByPurpose = response.data;
           me.displayXYChart();
         })
-        .catch(function(error) {
+        .catch(function (error) {
           if (error.response.status == 401) {
             // me.displayNotification("error", "Su sesión ha expirado.");
           } else {
@@ -340,11 +354,11 @@ export default {
     displayXYChart() {
       var chart = am4core.create(this.$refs.chartdivxy, am4charts.XYChart);
 
-     let data = this.visitorsByPurpose.map(x => {
+      let data = this.visitorsByPurpose.map((x) => {
         return {
-          short_desc:x.description.substring(0, 4)+'.',
+          short_desc: x.description.substring(0, 4) + ".",
           description: x.description,
-          value: x.value
+          value: x.value,
         };
       });
 
@@ -367,7 +381,7 @@ export default {
       series.columns.template.tooltipText =
         "Tipo: {categoryX}\nCantidad: {valueY}";
       series.columns.template.fill = am4core.color("#488fef");
-    }
-  }
+    },
+  },
 };
 </script>

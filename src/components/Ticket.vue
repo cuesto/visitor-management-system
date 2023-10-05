@@ -14,7 +14,12 @@
       <tr valign="top">
         <td colspan="3">&nbsp;</td>
         <td nowrap="true">
-          <v-img :src="ticketModel.imgSrc" border="0" max-width="65" max-height="48" />
+          <v-img
+            :src="ticketModel.imgSrc"
+            border="0"
+            max-width="65"
+            max-height="48"
+          />
         </td>
         <td colspan="4">&nbsp;</td>
       </tr>
@@ -43,7 +48,7 @@
             <tr valign="top">
               <td align="left">
                 <span>
-                  <font face="Arial" color="#000000" size="3">{{name}}</font>
+                  <font face="Arial" color="#000000" size="3">{{ name }}</font>
                 </span>
               </td>
             </tr>
@@ -58,7 +63,9 @@
             <tr valign="top">
               <td align="left">
                 <span>
-                  <font face="Arial" color="#000000" size="3">{{lastname}}</font>
+                  <font face="Arial" color="#000000" size="3">{{
+                    lastname
+                  }}</font>
                 </span>
               </td>
             </tr>
@@ -87,7 +94,9 @@
           <table width="168px" border="0" cellpadding="0" cellspacing="0">
             <td align="left">
               <span>
-                <font face="Arial" color="#000000" size="3">{{taxnumber}}</font>
+                <font face="Arial" color="#000000" size="3">{{
+                  taxnumber
+                }}</font>
               </span>
             </td>
           </table>
@@ -115,7 +124,7 @@
           <table width="168px" border="0" cellpadding="0" cellspacing="0">
             <td align="left">
               <span>
-                <font face="Arial" color="#000000" size="3">{{purpose}}</font>
+                <font face="Arial" color="#000000" size="3">{{ purpose }}</font>
               </span>
             </td>
           </table>
@@ -144,14 +153,18 @@
             <tr valign="top">
               <td align="left">
                 <span>
-                  <font face="Arial" color="#000000" size="3">{{employee}}&nbsp;-&nbsp;</font>
+                  <font face="Arial" color="#000000" size="3"
+                    >{{ employee }}&nbsp;-&nbsp;</font
+                  >
                 </span>
               </td>
             </tr>
             <tr valign="top">
               <td align="left">
                 <span>
-                  <font face="Arial" color="#000000" size="3">{{department}}</font>
+                  <font face="Arial" color="#000000" size="3">{{
+                    department
+                  }}</font>
                 </span>
               </td>
             </tr>
@@ -180,7 +193,9 @@
           <table width="168px" border="0" cellpadding="0" cellspacing="0">
             <td align="left">
               <span>
-                <font face="Arial" color="#000000" size="2">{{startdate}}</font>
+                <font face="Arial" color="#000000" size="2">{{
+                  startdate
+                }}</font>
               </span>
             </td>
           </table>
@@ -205,14 +220,16 @@ export default {
     "purpose",
     "employee",
     "department",
-    "startdate"
+    "startdate",
   ],
   data() {
     return {
       ticketModal: true,
-      ticketModel: new TicketModel()
+      ticketModel: new TicketModel(),
     };
   },
-  methods: {}
+  methods: {
+    
+  },
 };
 </script>

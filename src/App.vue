@@ -1,10 +1,15 @@
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" v-if="logged" app>
+    <v-navigation-drawer
+      v-model="drawer"
+      :clipped="$vuetify.breakpoint.lgAndUp"
+      v-if="logged"
+      app
+    >
       <template>
         <v-list dense>
           <template v-if="isAdmin || isRecep">
-            <v-list-item :to="{name:'home'}">
+            <v-list-item :to="{ name: 'home' }">
               <v-list-item-action>
                 <v-icon>home</v-icon>
               </v-list-item-action>
@@ -12,7 +17,7 @@
             </v-list-item>
           </template>
           <template v-if="isAdmin || isRecep">
-            <v-list-item :to="{name:'visitors'}">
+            <v-list-item :to="{ name: 'visitors' }">
               <v-list-item-action>
                 <v-icon>person_add</v-icon>
               </v-list-item-action>
@@ -20,7 +25,7 @@
             </v-list-item>
           </template>
           <template v-if="isAdmin">
-            <v-list-item :to="{name:'employeerequests'}">
+            <v-list-item :to="{ name: 'employeerequests' }">
               <v-list-item-action>
                 <v-icon>today</v-icon>
               </v-list-item-action>
@@ -28,7 +33,7 @@
             </v-list-item>
           </template>
           <template v-if="isAdmin">
-            <v-list-item :to="{name:'employees'}">
+            <v-list-item :to="{ name: 'employees' }">
               <v-list-item-action>
                 <v-icon>people</v-icon>
               </v-list-item-action>
@@ -36,7 +41,7 @@
             </v-list-item>
           </template>
           <template v-if="isAdmin">
-            <v-list-item :to="{name:'blacklists'}">
+            <v-list-item :to="{ name: 'blacklists' }">
               <v-list-item-action>
                 <v-icon>block</v-icon>
               </v-list-item-action>
@@ -44,7 +49,7 @@
             </v-list-item>
           </template>
           <template v-if="isAdmin">
-            <v-list-item :to="{name:'reports'}">
+            <v-list-item :to="{ name: 'reports' }">
               <v-list-item-action>
                 <v-icon>assessment</v-icon>
               </v-list-item-action>
@@ -52,7 +57,7 @@
             </v-list-item>
           </template>
           <template v-if="isAdmin">
-            <v-list-item :to="{name:'users'}">
+            <v-list-item :to="{ name: 'users' }">
               <v-list-item-action>
                 <v-icon>security</v-icon>
               </v-list-item-action>
@@ -63,7 +68,12 @@
       </template>
     </v-navigation-drawer>
 
-    <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="blue darken-3" dark>
+    <v-app-bar
+      :clipped-left="$vuetify.breakpoint.lgAndUp"
+      app
+      color="blue darken-3"
+      dark
+    >
       <v-toolbar-title style="width: 300px" class="ml-0 pl-4">
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <span class="hidden-sm-and-down">Sistema de Visitas</span>
@@ -72,7 +82,7 @@
       <v-btn @click="logout" v-if="logged" text>
         <v-icon>logout</v-icon>Salir
       </v-btn>
-      <v-btn :to="{name: 'login'}" v-else text> 
+      <v-btn :to="{ name: 'login' }" v-else text>
         <v-icon>apps</v-icon>Login
       </v-btn>
     </v-app-bar>
@@ -83,12 +93,14 @@
         </v-slide-y-transition>
       </v-container>
     </v-content>
-    
+
     <v-footer blue height="auto">
       <v-layout justify-center>
         <v-flex text-xs-center>
           <v-card flat tile color="primary" class="white--text">
-            <v-card-text class="white--text pt-0">InfoSocial &copy;{{year}}</v-card-text>
+            <v-card-text class="white--text pt-0"
+              >InfoSocial &copy;{{ year }}</v-card-text
+            >
           </v-card>
         </v-flex>
       </v-layout>
@@ -111,7 +123,7 @@ export default {
   data: () => ({
     //
     drawer: null,
-    year: new Date().getFullYear()
+    year: new Date().getFullYear(),
   }),
   computed: {
     logged() {
@@ -126,7 +138,7 @@ export default {
       return (
         this.$store.state.user && this.$store.state.user.role == "recepionist"
       );
-    }
+    },
   },
   created() {
     this.$store.dispatch("autoLogin");
@@ -134,7 +146,7 @@ export default {
   methods: {
     logout() {
       this.$store.dispatch("logOut");
-    }
-  }
+    },
+  },
 };
 </script>

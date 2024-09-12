@@ -5,91 +5,93 @@
         <v-container>
           <v-row cols="6">
             <v-col cols="12">
-              //create an space beetwen the buttons
               <v-card>
-                <v-toolbar floating>
-                  <v-toolbar-title>Reporte de Visitas</v-toolbar-title>
-                  <v-spacer></v-spacer>
-                  <v-spacer></v-spacer>
-                  <v-spacer></v-spacer>
+  <v-toolbar floating>
+    <v-toolbar-title>Reporte de Visitas</v-toolbar-title>
+    <v-spacer></v-spacer>
 
-                  <v-layout align-center>
-                    <v-menu
-                      v-model="menuStartDate"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="startDate"
-                          label="Fecha Inicio*"
-                          prepend-icon="event"
-                          readonly
-                          hide-details
-                          single-line
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="startDate"
-                        @input="menuStartDate = false"
-                      ></v-date-picker>
-                    </v-menu>
+    <v-menu
+      v-model="menuStartDate"
+      :close-on-content-click="false"
+      :nudge-right="40"
+      transition="scale-transition"
+      offset-y
+      full-width
+      min-width="290px"
+    >
+      <template v-slot:activator="{ on }">
+        <v-text-field
+          v-model="startDate"
+          label="Fecha Inicio*"
+          prepend-icon="event"
+          readonly
+          hide-details
+          single-line
+          v-on="on"
+        ></v-text-field>
+      </template>
+      <v-date-picker
+        v-model="startDate"
+        @input="menuStartDate = false"
+      ></v-date-picker>
+    </v-menu>
 
-                    <v-menu
-                      class="pad"
-                      v-model="menuEndDate"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      full-width
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="endDate"
-                          label="Fecha Fin*"
-                          prepend-icon="event"
-                          readonly
-                          hide-details
-                          single-line
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="endDate"
-                        @input="menuEndDate = false"
-                      ></v-date-picker>
-                    </v-menu>
-                    <v-tooltip class="pad" v-model="showTooltipSearch" top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn color="success" v-on="on" @click="getData">
-                          <v-icon left>search</v-icon>Buscar
-                        </v-btn>
-                      </template>
-                      <span>Buscar Registros</span>
-                    </v-tooltip>                        
-                    <v-spacer></v-spacer>
-                    <v-btn color="info" >
-                      <v-icon left>file_download</v-icon>
-                      <vue-excel-xlsx
-                        :data="visitors"
-                        :columns="headersExcel"
-                        :file-name="'Reporte de Visitas_'+startDate+'_'+endDate"
-                        :file-type="'xlsx'"
-                        :sheet-name="'visitas'"
-                      >
-                        Descargar
-                      </vue-excel-xlsx>
-                    </v-btn>
-                  </v-layout>
-                </v-toolbar>
-              </v-card>
+    <v-spacer></v-spacer>
+
+    <v-menu
+      class="pad"
+      v-model="menuEndDate"
+      :close-on-content-click="false"
+      :nudge-right="40"
+      transition="scale-transition"
+      offset-y
+      full-width
+      min-width="290px"
+    >
+      <template v-slot:activator="{ on }">
+        <v-text-field
+          v-model="endDate"
+          label="Fecha Fin*"
+          prepend-icon="event"
+          readonly
+          hide-details
+          single-line
+          v-on="on"
+        ></v-text-field>
+      </template>
+      <v-date-picker
+        v-model="endDate"
+        @input="menuEndDate = false"
+      ></v-date-picker>
+    </v-menu>
+
+    <v-spacer></v-spacer>
+
+    <v-tooltip class="pad" v-model="showTooltipSearch" top>
+      <template v-slot:activator="{ on }">
+        <v-btn color="success" v-on="on" @click="getData">
+          <v-icon left>search</v-icon>Buscar
+        </v-btn>
+      </template>
+      <span>Buscar Registros</span>
+    </v-tooltip>
+
+    <v-spacer></v-spacer>
+
+    <v-btn color="info" >
+      <v-icon left>file_download</v-icon>
+      <vue-excel-xlsx
+        :data="visitors"
+        :columns="headersExcel"
+        :file-name="'Reporte de Visitas_'+startDate+'_'+endDate"
+        :file-type="'xlsx'"
+        :sheet-name="'visitas'"
+      >
+        Descargar
+      </vue-excel-xlsx>
+    </v-btn>
+  </v-toolbar>
+</v-card>
             </v-col>
           </v-row>
           <v-row cols="6">
@@ -169,9 +171,9 @@ export default {
   data() {
     return {
       menuStartDate: false,
-      startDate: "2019-01-01",
+      startDate: "",
       menuEndDate: false,
-      endDate: "2023-01-01",
+      endDate: "",
       showTooltipSearch: false,
       showTooltipExport: false,
       searchVisitors: "",

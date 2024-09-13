@@ -111,12 +111,7 @@
             </v-col>
           </v-row>
           <v-dialog v-model="ticketModal" max-width="1000">
-            <v-card>
-              <v-card-text>
-                <v-btn @click="printPDF()">
-                  <v-icon>print</v-icon>
-                </v-btn>
-                <Ticket
+            <Ticket
                   :name="label.name"
                   :lastname="label.lastname"
                   :taxnumber="label.taxnumber"
@@ -125,11 +120,6 @@
                   :department="label.department"
                   :startdate="label.startdate"
                 />
-                <v-btn @click="hideTicketModal()" color="blue darken-1" text
-                  >Cancelar</v-btn
-                >
-              </v-card-text>
-            </v-card>
           </v-dialog>
         </v-container>
       </v-card>

@@ -7,9 +7,10 @@
             <v-container py-0>
               <v-layout wrap>
                 <v-flex xs12 md5>
-                  <v-text-field ref="taxNumberField" :loading="loadingCedulaButton" label="Cédula*" :rules="[rules.required]"
-                    v-model="visitorModel.taxNumberVisitor" v-mask="maskCedula"
-                    hint="Cédula del visitante" @keyup.enter="verifyCedula(visitorModel.taxNumberVisitor)"></v-text-field>
+                  <v-text-field ref="taxNumberField" :loading="loadingCedulaButton" label="Cédula*"
+                    :rules="[rules.required]" v-model="visitorModel.taxNumberVisitor" v-mask="maskCedula"
+                    hint="Cédula del visitante"
+                    @keyup.enter="verifyCedula(visitorModel.taxNumberVisitor)"></v-text-field>
                 </v-flex>
                 <v-flex xs1 md1>
                   <v-tooltip v-model="showTooltip" top>
@@ -65,10 +66,15 @@
                   <v-textarea label="Comentarios" v-model="visitorModel.comment"
                     hint="Puede digitar cualquier observación o comentario."></v-textarea>
                 </v-flex>
-                <v-flex xs12 text-xs-right>
-                  <v-btn class="mx-0 font-weight-light" color="success" @click="save">
-                    <v-icon left>save</v-icon>Guardar
-                  </v-btn>
+                <v-flex xs12 md4 text-xs-right>
+                  <div style="display: flex; gap: 10px;">
+                    <v-btn class="mx-0 font-weight-light" color="success" @click="save">
+                      <v-icon left>save</v-icon>Guardar
+                    </v-btn>
+                    <v-btn class="mx-0 font-weight-light" color="primary" @click="saveAndContinue">
+                      <v-icon left>save</v-icon>Guardar y Continuar Agregando
+                    </v-btn>
+                  </div>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -115,7 +121,8 @@ export default {
         { text: "Femenino", value: 2 },
         { text: "Otro", value: 3 }
       ],
-      employeesrequest: null
+      employeesrequest: null,
+      continueAdding: false,
     };
   },
   created() {
@@ -220,11 +227,11 @@ export default {
           me.visitorModel.purposeKey = response.data.purposeKey;
         })
         .catch(function (error) {
-          if(error.message == "Request failed with status code 404"){
+          if (error.message == "Request failed with status code 404") {
             me.displayNotification("warning", "Cédula no encontrada en la base de datos.");
-          }else{
+          } else {
 
-          me.displayNotification("error", error.message);
+            me.displayNotification("error", error.message);
           }
           me.loadingCedulaButton = false;
         });
@@ -246,6 +253,11 @@ export default {
         });
     },
 
+    saveAndContinue() {
+      this.continueAdding = true;
+      this.save();
+    },
+
     async save() {
       if (this.$refs.form.validate()) {
         let me = this;
@@ -261,16 +273,22 @@ export default {
                 me.updateEmployeeRequest();
               }
               //me.sendSMS(response.data.visitorKey);
-              me.clean();
+              if (me.continueAdding) {
+                me.visitorModel.taxNumberVisitor = "";
+                me.visitorModel.name = "";
+              } else {
+                me.clean();
+                router.push({ name: "home" });
+              }
               me.displayNotification(
                 "success",
                 "Se creó la visita correctamente."
               );
-              router.push({ name: "home" });
             }
           })
           .catch(function (error) {
             me.displayNotification("error", error.message);
+            me.continueAdding = false;
           });
       }
     },

@@ -99,7 +99,7 @@
         <v-flex text-xs-center>
           <v-card flat tile color="primary" class="white--text">
             <v-card-text class="white--text pt-0"
-              >InfoSocial &copy;{{ year }}</v-card-text
+              >Apitechnology &copy;{{ year }}</v-card-text
             >
           </v-card>
         </v-flex>

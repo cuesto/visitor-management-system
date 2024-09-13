@@ -7,9 +7,9 @@
             <v-container py-0>
               <v-layout wrap>
                 <v-flex xs12 md5>
-                  <v-text-field :loading="loadingCedulaButton" label="Cédula*" :rules="[rules.required]"
+                  <v-text-field ref="taxNumberField" :loading="loadingCedulaButton" label="Cédula*" :rules="[rules.required]"
                     v-model="visitorModel.taxNumberVisitor" v-mask="maskCedula"
-                    hint="Cédula del visitante"></v-text-field>
+                    hint="Cédula del visitante" @keyup.enter="verifyCedula(visitorModel.taxNumberVisitor)"></v-text-field>
                 </v-flex>
                 <v-flex xs1 md1>
                   <v-tooltip v-model="showTooltip" top>
@@ -122,6 +122,9 @@ export default {
     this.getEmployees();
     this.getPurposes();
     this.loadEmployeeRequest();
+  },
+  mounted() {
+    this.$refs.taxNumberField.focus();
   },
   watch: {
     value: {

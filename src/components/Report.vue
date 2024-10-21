@@ -225,7 +225,7 @@ export default {
     async getVisitors() {
       let me = this;
       await axios
-        .get("api/Visitors/GetVisitors/" + this.startDate + "/" + this.endDate)
+        .get("api/Visitors/GetVisitors/" + this.startDate + "/" + this.endDate + " 23:59:59")
         .then(function (response) {
           me.visitors = response.data;
         })
